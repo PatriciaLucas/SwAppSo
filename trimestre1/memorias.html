@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Didático - Memória Principal e Hierarquia de Memória</title>
+  
+  <style>
+    :root{--bg:#f7f9fc;--paper:#fff;--primary:#1f4e79;--secondary:#2e75b6;--border:#d9e2ec;--text:#1f2937;--muted:#5b6573;--shadow:0 6px 18px rgba(31,41,55,.08);--radius:14px;--sidebar:280px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+    header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:2.5rem 1.25rem}.header-content,footer{max-width:1200px;margin:0 auto}header h1{margin:0 0 .5rem;font-size:2rem}
+    .layout{max-width:1200px;margin:0 auto;display:flex;align-items:flex-start;gap:1.25rem;padding:1.25rem}
+    nav{width:var(--sidebar);min-width:var(--sidebar);background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto;z-index:10}.nav-content{padding:1rem}nav h2{margin:0 0 .75rem;font-size:1.1rem;color:var(--primary)}nav ul{margin:0;padding-left:1.15rem;columns:1}nav li{margin:.35rem 0}nav a{color:var(--secondary);font-weight:bold;text-decoration:none}nav a:hover{text-decoration:underline}
+    main{flex:1;min-width:0;padding:0 0 2rem}section,article{background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.4rem;margin-bottom:1.25rem}
+    h2,h3,h4{color:var(--primary);margin-top:0}.definicao,.exemplo,.resumo,.exercicios,.pontos-chave,.aviso{border-left:6px solid var(--secondary);border-radius:10px;padding:1rem;margin:1rem 0}.definicao{background:#eef7ff}.exemplo{background:#eefcf1;border-left-color:#3a9d5d}.resumo{background:#fff8e8;border-left-color:#d4a017}.exercicios{background:#fff0f0;border-left-color:#c0504d}.pontos-chave{background:#eef5ff;border-left-color:#5b9bd5}.aviso{background:#f5f5f5;border-left-color:#888}.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem}.mini-card{background:#f9fbfd;border:1px solid var(--border);border-radius:12px;padding:1rem}.formula{background:#f8fbff;border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;margin:.8rem 0;font-family:Consolas,monospace;overflow-x:auto}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{border:1px solid var(--border);padding:.75rem;text-align:left;vertical-align:top}th{background:#eef4fb;color:var(--primary)}figure{margin:1.25rem auto;padding:1rem;border:1px solid var(--border);border-radius:12px;background:#fafcff;text-align:center}figure img{max-width:100%;height:auto;display:block;margin:0 auto}figcaption{margin-top:.6rem;color:var(--muted);font-size:.95rem}footer{padding:0 1.25rem 2rem;color:var(--muted)}
+    .menu-toggle{display:none;position:fixed;top:.85rem;left:.85rem;z-index:30;border:0;border-radius:999px;background:var(--primary);color:white;padding:.75rem .9rem;box-shadow:var(--shadow);font-size:1.25rem;line-height:1;cursor:pointer}.menu-toggle span{font-size:.95rem;margin-left:.35rem;vertical-align:middle;font-weight:bold}.overlay{display:none}
+    @media(max-width:800px){header{padding:4rem 1.25rem 2rem}header h1{font-size:1.55rem}.layout{display:block;padding:1rem}.menu-toggle{display:block}nav{position:fixed;top:0;left:0;width:min(82vw,320px);min-width:0;height:100vh;max-height:100vh;border-radius:0;transform:translateX(-105%);transition:transform .22s ease;z-index:25;border-top:0;border-bottom:0;border-left:0}body.menu-open nav{transform:translateX(0)}.overlay{display:block;position:fixed;inset:0;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:20}body.menu-open .overlay{opacity:1;pointer-events:auto}main{padding-top:0}nav ul{columns:1}}
+    @media print{.menu-toggle,.overlay,nav{display:none}section,article{box-shadow:none;break-inside:avoid}body{background:white}.layout{display:block;max-width:none;padding:0}main{padding:0}figure{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<header><div class="header-content"><h1>Memória Principal e Hierarquia de Memória</h1><p><strong>Material didático </strong> para estudantes do 1º ano do curso técnico em informática integrado ao ensino médio do IFNMG Campus Salinas.</p><p>Referência: Livro Introdução à Organização de Computadores (Mario Antônio Monteiro).</p></div></header>
+<button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰<span>Menu</span></button>
+<div class="overlay" id="menuOverlay"></div>
+<div class="layout">
+<nav id="sidebar"><div class="nav-content"><h2>Sumário</h2><ul><li><a href="#apresentacao">1. Apresentação</a></li><li><a href="#introducao">2. O que é memória</a></li><li><a href="#representacao">3. Representação</a></li><li><a href="#enderecamento">4. Endereços</a></li><li><a href="#operacoes">5. Leitura e escrita</a></li><li><a href="#hierarquia">6. Hierarquia</a></li><li><a href="#componentes">7. Componentes</a></li><li><a href="#organizacao-mp">8. Organização da MP</a></li><li><a href="#capacidade">9. Capacidade</a></li><li><a href="#tipos">10. RAM e ROM</a></li><li><a href="#erros">11. Erros</a></li><li><a href="#exercicios">12. Exercícios</a></li><li><a href="#conclusao">13. Conclusão</a></li></ul></div></nav>
+<main>
+<section id="apresentacao"><h2>1. Apresentação</h2><p>Quando usamos um computador, várias informações precisam ser armazenadas: programas, textos, imagens, instruções e resultados de cálculos. A memória é o conjunto de componentes responsáveis por guardar essas informações e disponibilizá-las quando forem necessárias.</p><div class="pontos-chave"><h3>Pontos-chave</h3><ul><li>Entender o papel da memória em um sistema computacional.</li><li>Diferenciar bit, byte, célula, endereço e palavra.</li><li>Compreender a hierarquia de memória.</li><li>Reconhecer diferenças entre RAM, ROM, cache e memória secundária.</li></ul></div></section>
+<section id="introducao"><h2>2. O que é memória em um computador</h2><p>A memória pode ser entendida como um <strong>depósito de informações</strong>. Ela guarda dados e instruções para que o sistema consiga recuperá-los no momento certo.</p><div class="definicao"><h3>Definição</h3><p><strong>Memória</strong> é o componente responsável por armazenar informações que serão usadas por um sistema de computação.</p></div><p>Existem vários tipos de memória porque o computador precisa equilibrar velocidade, capacidade e custo.</p><figure><img src="imagens/figura-4-1-deposito-memoria.png" alt="Figura 4.1 - Depósito que funciona de modo semelhante a uma memória"><figcaption>Figura 4.1 - Exemplo de depósito com endereços, usado como analogia para a memória.</figcaption></figure><div class="resumo"><h3>Resumo</h3><p>A memória guarda informações para o funcionamento do computador. Como não existe um único tipo de memória que seja ao mesmo tempo muito rápida, muito grande e barata, os computadores usam uma combinação de memórias diferentes.</p></div></section>
+<section id="representacao"><h2>3. Como as informações são representadas</h2><p>O elemento básico de armazenamento físico de uma memória é o <strong>bit</strong>. Um bit pode assumir apenas dois valores: <strong>0</strong> ou <strong>1</strong>.</p><div class="definicao"><ul><li><strong>Bit</strong>: menor unidade de informação digital.</li><li><strong>Byte</strong>: grupo de 8 bits.</li><li><strong>Célula</strong>: unidade de armazenamento da memória principal.</li></ul></div><p>Como um bit sozinho representa pouca informação, os computadores agrupam bits para formar unidades maiores.</p></section>
+<section id="enderecamento"><h2>4. Endereços de memória</h2><p>Para encontrar uma informação armazenada, o sistema precisa saber onde ela está. Cada célula recebe um número de identificação chamado <strong>endereço</strong>.</p><div class="formula">Se uma memória possui N células, seus endereços vão de 0 até N - 1.</div><table><thead><tr><th>Conceito</th><th>Significado</th></tr></thead><tbody><tr><td>Endereço</td><td>Indica a posição da célula na memória.</td></tr><tr><td>Conteúdo</td><td>É o valor armazenado naquela célula.</td></tr><tr><td>Posição</td><td>Local correspondente ao endereço.</td></tr></tbody></table></section>
+<section id="operacoes"><h2>5. Operações de leitura e escrita</h2><ul><li><strong>Escrita</strong>: grava um dado em uma célula da memória.</li><li><strong>Leitura</strong>: copia um dado de uma célula da memória para outro componente do sistema.</li></ul><div class="exemplo"><p>Na escrita, o novo valor substitui o conteúdo anterior. Na leitura, o valor é apenas copiado, sem apagar o original.</p></div></section>
+<section id="hierarquia"><h2>6. Hierarquia de memória</h2><p>O computador usa uma <strong>hierarquia</strong> de memórias. No topo ficam memórias mais rápidas, menores e mais caras. Na base ficam memórias mais lentas, maiores e mais baratas.</p><figure><img src="imagens/figura-4-4-hierarquia-memoria.png" alt="Figura 4.4 - Hierarquia de memória"><figcaption>Figura 4.4 - Hierarquia de memória: registradores, cache, memória principal e memória secundária.</figcaption></figure><table><thead><tr><th>Nível</th><th>Velocidade</th><th>Capacidade</th><th>Custo por byte</th></tr></thead><tbody><tr><td>Registradores</td><td>Muito alta</td><td>Muito baixa</td><td>Muito alto</td></tr><tr><td>Memória cache</td><td>Muito alta</td><td>Baixa</td><td>Alto</td></tr><tr><td>Memória principal (RAM)</td><td>Alta</td><td>Média</td><td>Médio</td></tr><tr><td>Memória secundária</td><td>Baixa</td><td>Alta</td><td>Baixo</td></tr></tbody></table></section>
+<section id="componentes"><h2>7. Registradores, cache, RAM e memória secundária</h2><div class="card-grid"><div class="mini-card"><h3>Registradores</h3><p>Pequenas memórias internas do processador.</p></div><div class="mini-card"><h3>Cache</h3><p>Memória muito rápida que guarda dados usados com frequência.</p></div><div class="mini-card"><h3>RAM</h3><p>Memória principal de trabalho, volátil.</p></div><div class="mini-card"><h3>Memória secundária</h3><p>Armazenamento de maior capacidade e mais duradouro.</p></div></div></section>
+<section id="organizacao-mp"><h2>8. Organização da memória principal</h2><p>A memória principal é organizada como um conjunto de células. Cada célula tem um endereço e armazena uma quantidade fixa de bits.</p><div class="aviso"><p>A memória principal costuma ser tratada no mercado como RAM, embora o sistema também possa possuir áreas do tipo ROM para rotinas de inicialização.</p></div></section>
+<section id="capacidade"><h2>9. Capacidade da memória e cálculos</h2><p>A capacidade da memória está relacionada à quantidade de células disponíveis e ao tamanho de cada célula.</p><div class="formula">T = N × M</div><ul><li><strong>T</strong> = total de bits armazenáveis;</li><li><strong>N</strong> = quantidade de células;</li><li><strong>M</strong> = quantidade de bits por célula.</li></ul><div class="formula">N = 2<sup>E</sup></div><p>Onde <strong>E</strong> é o número de bits necessários para representar os endereços.</p></section>
+<section id="tipos"><h2>10. Tipos de memória RAM e ROM</h2><article><h3>RAM</h3><p>A RAM é usada como memória de trabalho. Ela permite leitura e escrita, mas é volátil.</p></article><article><h3>ROM</h3><p>A ROM armazena informações que não devem ser perdidas facilmente, como rotinas de inicialização.</p><table><thead><tr><th>Tipo</th><th>Características</th></tr></thead><tbody><tr><td>ROM</td><td>Programada na fabricação.</td></tr><tr><td>PROM</td><td>Programada uma única vez após a fabricação.</td></tr><tr><td>EPROM</td><td>Pode ser apagada com luz ultravioleta e reprogramada.</td></tr><tr><td>EEPROM</td><td>Pode ser apagada e reprogramada eletricamente.</td></tr><tr><td>Flash</td><td>Semelhante à EEPROM, com apagamento rápido.</td></tr></tbody></table></article></section>
+<section id="erros"><h2>11. Erros e correção de erros</h2><p>Durante a transferência e o armazenamento de informações, podem ocorrer erros. Um bit pode mudar de 0 para 1 ou de 1 para 0.</p><div class="definicao"><p><strong>ECC</strong> significa <em>Error Correction Code</em>, ou código de correção de erros.</p></div><p>Esse processo adiciona bits extras de controle aos dados. Quando a informação é lida, o sistema compara esses bits para verificar se houve erro.</p></section>
+<section id="exercicios">
+      <h2>12. Exercícios de revisão</h2>
+
+      <div class="exercicios">
+        <h3>Questões conceituais</h3>
+        <ol>
+          <li>Explique o que é memória em um computador.</li>
+          <li>Por que os computadores usam vários tipos de memória e não apenas uma?</li>
+          <li>Qual é a diferença entre endereço e conteúdo de memória?</li>
+          <li>Explique a diferença entre leitura e escrita.</li>
+          <li>Por que a memória RAM é considerada volátil?</li>
+          <li>Qual é a função da memória cache?</li>
+          <li>Qual a diferença principal entre RAM e ROM?</li>
+          <li>O que é hierarquia de memória?</li>
+        </ol>
+      </div>
+
+      <div class="exercicios">
+        <h3>Questões de cálculo</h3>
+        <ol>
+          <li>Explique o significado da fórmula <code>T = N × M</code>.</li>
+          <li>Uma memória tem 32 células, e cada célula armazena 8 bits. Quantos bits podem ser armazenados no total?</li>
+          <li>Se uma memória possui 2<sup>10</sup> células, quantos endereços ela possui?</li>
+          <li>Uma memória armazena 16 bits por célula e possui 1024 células. Qual é a capacidade total em bits?</li>
+        </ol>
+      </div>
+    </section>
+<section id="conclusao"><h2>13. Conclusão final</h2><p>O estudo da memória é essencial para entender como um computador funciona. A memória principal faz parte de uma organização maior, que envolve registradores, cache e armazenamento secundário.</p><div class="resumo"><p>Em resumo, a memória é um sistema organizado em níveis. Cada tipo tem uma função específica e todos trabalham juntos para permitir que programas e dados sejam armazenados, acessados e processados com eficiência.</p></div></section>
+</main>
+</div>
+<footer><p>Material didático elaborado a partir do conteúdo identificado no PDF do livro, com figuras extraídas como arquivos separados.</p></footer>
+
+<script>
+  const toggleButton = document.querySelector('.menu-toggle');
+  const overlay = document.querySelector('#menuOverlay');
+  const navLinks = document.querySelectorAll('nav a');
+
+  function closeMenu() {
+    document.body.classList.remove('menu-open');
+    toggleButton.setAttribute('aria-expanded', 'false');
+  }
+
+  toggleButton.addEventListener('click', () => {
+    const isOpen = document.body.classList.toggle('menu-open');
+    toggleButton.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  overlay.addEventListener('click', closeMenu);
+  navLinks.forEach(link => link.addEventListener('click', closeMenu));
+</script>
+</body>
+</html>
