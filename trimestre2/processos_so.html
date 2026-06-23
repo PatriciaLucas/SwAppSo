@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Processos e Componentes de um Sistema Operacional</title>
+
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --paper: #ffffff;
+      --primary: #1f4e79;
+      --secondary: #2e75b6;
+      --border: #d9e2ec;
+      --text: #1f2937;
+      --muted: #5b6573;
+      --shadow: 0 6px 18px rgba(31, 41, 55, 0.08);
+      --radius: 14px;
+      --sidebar: 285px;
+      --green: #3a9d5d;
+      --red: #c0504d;
+      --yellow: #d4a017;
+      --purple: #7c3aed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      padding: 2.5rem 1.25rem;
+    }
+
+    .header-content,
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2rem;
+    }
+
+    header p {
+      margin: 0.25rem 0;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding: 1.25rem;
+    }
+
+    nav {
+      width: var(--sidebar);
+      min-width: var(--sidebar);
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow: auto;
+      z-index: 10;
+    }
+
+    .nav-content {
+      padding: 1rem;
+    }
+
+    nav h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    nav ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    nav li {
+      margin: 0.35rem 0;
+    }
+
+    nav a {
+      color: var(--secondary);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding-bottom: 2rem;
+    }
+
+    section,
+    article {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    article {
+      background: #fbfdff;
+      box-shadow: none;
+    }
+
+    h2,
+    h3,
+    h4 {
+      color: var(--primary);
+      margin-top: 0;
+    }
+
+    .definicao,
+    .exemplo,
+    .observacao,
+    .resumo,
+    .exercicios,
+    .pontos-chave {
+      border-left: 6px solid var(--secondary);
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .definicao {
+      background: #eef7ff;
+    }
+
+    .exemplo {
+      background: #eefcf1;
+      border-left-color: var(--green);
+    }
+
+    .observacao {
+      background: #fff8e8;
+      border-left-color: var(--yellow);
+    }
+
+    .resumo {
+      background: #f5f0ff;
+      border-left-color: var(--purple);
+    }
+
+    .exercicios {
+      background: #fff0f0;
+      border-left-color: var(--red);
+    }
+
+    .pontos-chave {
+      background: #eef5ff;
+      border-left-color: #5b9bd5;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .mini-card {
+      background: #f9fbfd;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .mini-card h3 {
+      margin-bottom: 0.4rem;
+    }
+
+    .diagram {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fafcff;
+      overflow-x: auto;
+    }
+
+    .diagram img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: auto;
+      border-radius: 10px;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef4fb;
+      color: var(--primary);
+    }
+
+    code {
+      background: #eef4fb;
+      padding: 0.15rem 0.35rem;
+      border-radius: 5px;
+      color: #9f1239;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #eef4fb;
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 0.88rem;
+      margin: 0.15rem 0.2rem 0.15rem 0;
+    }
+
+    .memory-layout {
+      max-width: 430px;
+      margin: 1rem auto;
+      border: 2px solid var(--primary);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .memory-block {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      font-weight: bold;
+    }
+
+    .memory-block small {
+      display: block;
+      font-weight: normal;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    .memory-block.stack {
+      background: #fef3c7;
+    }
+
+    .memory-block.heap {
+      background: #dcfce7;
+    }
+
+    .memory-block.data {
+      background: #dbeafe;
+    }
+
+    .memory-block.text {
+      background: #ede9fe;
+      border-bottom: 0;
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 0.85rem;
+      left: 0.85rem;
+      z-index: 30;
+      border: 0;
+      border-radius: 999px;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 0.9rem;
+      box-shadow: var(--shadow);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      font-size: 0.95rem;
+      margin-left: 0.35rem;
+      vertical-align: middle;
+      font-weight: bold;
+    }
+
+    .overlay {
+      display: none;
+    }
+
+    footer {
+      padding: 0 1.25rem 2rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 800px) {
+      header {
+        padding: 4rem 1.25rem 2rem;
+      }
+
+      header h1 {
+        font-size: 1.55rem;
+      }
+
+      .layout {
+        display: block;
+        padding: 1rem;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: min(84vw, 330px);
+        min-width: 0;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        transform: translateX(-105%);
+        transition: transform 0.22s ease;
+        z-index: 25;
+        border-top: 0;
+        border-bottom: 0;
+        border-left: 0;
+      }
+
+      body.menu-open nav {
+        transform: translateX(0);
+      }
+
+      .overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease;
+        z-index: 20;
+      }
+
+      body.menu-open .overlay {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
+    @media print {
+      .menu-toggle,
+      .overlay,
+      nav {
+        display: none;
+      }
+
+      body {
+        background: white;
+      }
+
+      .layout {
+        display: block;
+        max-width: none;
+        padding: 0;
+      }
+
+      section,
+      article {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <div class="eyebrow">Sistemas Operacionais</div>
+      <h1>Processos e Componentes</h1>
+    </div>
+  </header>
+
+  <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰<span>Menu</span></button>
+  <div class="overlay" id="menuOverlay"></div>
+
+  <div class="layout">
+    <nav id="sidebar">
+      <div class="nav-content">
+        <h2>Sumário</h2>
+        <ul>
+          <li><a href="#processo">Processo no Sistema Operacional</a></li>
+          <li><a href="#programa-processo">Programa versus Processo</a></li>
+          <li><a href="#layout-memoria">Organização de um processo na Memória</a></li>
+          <li><a href="#gestao-processos">Gestão de Processos</a></li>
+          <li><a href="#cpu-io">CPU-bound e I/O-bound</a></li>
+          <li><a href="#componentes">Componentes de um SO</a></li>
+          <li><a href="#kernel">Kernel</a></li>
+          <li><a href="#funcoes-kernel">Funções do Kernel</a></li>
+          <li><a href="#funcionamento-kernel">Funcionamento do Kernel</a></li>
+          <li><a href="#shell">Shell</a></li>
+          <li><a href="#cli-gui">CLI versus GUI</a></li>
+          <li><a href="#sistemas-comuns">Sistemas Operacionais Comuns</a></li>
+          <li><a href="#exercicios">Exercícios de Revisão</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <section id="processo">
+        <h2>Processo no Sistema Operacional</h2>
+
+        <p>
+          Um <strong>processo</strong> é um programa em execução. Quando escrevemos um código-fonte
+          em linguagens como C ou C++ e o compilamos, o compilador gera um arquivo binário executável.
+          Esse arquivo executável é chamado de <strong>programa</strong>. Quando ele é carregado na memória
+          e começa a ser executado, passa a ser chamado de <strong>processo</strong>.
+        </p>
+
+        <div class="definicao">
+          <h3>Definição</h3>
+          <p>
+            <strong>Processo</strong> é a instância ativa de um programa em execução, com código,
+            dados, estado de execução e recursos associados.
+          </p>
+        </div>
+
+        
+        <figure class="diagram">
+          <img src="processos1.png" alt="Processo no sistema operacional">
+        </figure> 
+
+        <div class="exemplo">
+          <h3>Exemplo</h3>
+          <p>
+            O arquivo executável de um navegador instalado no computador é um programa. Quando você
+            abre o navegador, o sistema operacional cria um processo para executar esse programa.
+          </p>
+        </div>
+
+        <div class="observacao">
+          <h3>Observação</h3>
+          <p>
+            Um mesmo programa pode gerar vários processos. Se um arquivo executável for aberto várias
+            vezes, o sistema operacional pode criar várias instâncias, isto é, vários processos em execução.
+          </p>
+          <figure class="diagram">
+            <img src="processos2.png" alt="Um programa criando vários processos">
+          </figure>
+        </div>
+      </section>
+
+      <section id="programa-processo">
+        <h2>Programa versus Processo</h2>
+
+        <p>
+          Programa e processo são conceitos relacionados, mas não significam a mesma coisa.
+          O programa é uma entidade passiva, armazenada em disco. O processo é uma entidade ativa,
+          carregada na memória e controlada pelo sistema operacional durante sua execução.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Aspecto</th>
+              <th>Programa</th>
+              <th>Processo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Natureza</td>
+              <td>Entidade passiva.</td>
+              <td>Entidade ativa.</td>
+            </tr>
+            <tr>
+              <td>Onde fica</td>
+              <td>Normalmente armazenado em disco.</td>
+              <td>Carregado na memória principal durante a execução.</td>
+            </tr>
+            <tr>
+              <td>Estado</td>
+              <td>Não possui estado de execução.</td>
+              <td>Possui estado, contexto, recursos e informações de controle.</td>
+            </tr>
+            <tr>
+              <td>Exemplo</td>
+              <td>Arquivo <code>editor.exe</code>.</td>
+              <td>Editor aberto e em execução.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        
+
+
+        
+      </section>
+
+      <section id="layout-memoria">
+        <h2>Como um Processo é organizado na Memória</h2>
+
+        <p>
+          Quando um processo está em execução, ele ocupa uma área da memória dividida em partes.
+          Cada parte tem uma função específica no funcionamento do programa.
+        </p>
+
+        <div class="memory-layout" aria-label="Representação visual do layout de memória de um processo">
+          <div class="memory-block stack">
+            Pilha
+            <small>Parâmetros de função, endereços de retorno e variáveis locais.</small>
+          </div>
+          <div class="memory-block heap">
+            Heap
+            <small>Memória alocada dinamicamente durante a execução.</small>
+          </div>
+          <div class="memory-block data">
+            Dados
+            <small>Variáveis globais e dados estáticos.</small>
+          </div>
+          <div class="memory-block text">
+            Texto / Código
+            <small>Instruções executáveis do programa.</small>
+          </div>
+        </div>
+
+        <article>
+          <h3>Principais áreas</h3>
+          <ul>
+            <li><strong>Seção de texto ou código:</strong> contém as instruções executáveis do programa. Normalmente é uma área somente leitura.</li>
+            <li><strong>Seção de dados:</strong> armazena variáveis globais e dados que existem durante a execução do processo.</li>
+            <li><strong>Heap:</strong> área usada para memória alocada dinamicamente, conforme o programa precisa de novos espaços durante a execução.</li>
+            <li><strong>Pilha:</strong> armazena dados temporários, como parâmetros de função, endereços de retorno e variáveis locais.</li>
+          </ul>
+        </article>
+
+        <div class="exemplo">
+          <h3>Exemplo</h3>
+          <p>
+            Em um programa que calcula uma soma, os valores temporários usados
+            podem ficar na pilha. 
+          </p>
+        </div>
+      </section>
+
+      <section id="gestao-processos">
+        <h2>Gestão de Processos</h2>
+
+        <p>
+          A gestão de processos é uma função essencial do sistema operacional. Ela lida com a criação,
+          execução, agendamento, coordenação e finalização de processos, buscando usar a CPU de forma
+          eficiente e manter o bom desempenho do sistema.
+        </p>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <h3>Criação</h3>
+            <p>O sistema operacional cria processos quando programas são iniciados.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Agendamento</h3>
+            <p>O escalonador decide qual processo deve usar a CPU em cada momento.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Coordenação</h3>
+            <p>Processos podem precisar compartilhar recursos ou se comunicar.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Finalização</h3>
+            <p>Quando o processo termina, o sistema libera os recursos utilizados.</p>
+          </div>
+        </div>
+
+        <div class="observacao">
+          <h3>Observação</h3>
+          <p>
+            Sistemas de tarefa única são mais simples, pois executam apenas um processo por vez.
+            Sistemas de multiprogramação e multitarefa são mais complexos, pois vários processos
+            precisam compartilhar CPU, memória e dispositivos.
+          </p>
+        </div>
+
+        <p>
+          Quando processos ativos compartilham memória ou outros recursos, o sistema operacional precisa
+          controlar esse acesso com cuidado. A sincronização é necessária quando os processos interagem,
+          comunicam-se ou dependem uns dos outros.
+        </p>
+
+      </section>
+
+      <section id="cpu-io">
+        <h2>Processos CPU-bound e I/O-bound</h2>
+
+        <p>
+          Os processos não usam os recursos do computador da mesma forma. Alguns exigem mais tempo de CPU,
+          enquanto outros passam mais tempo esperando operações de entrada e saída.
+          
+        </p>
+
+        <div class="card-grid">
+          <article>
+            <h3>Processo CPU-bound</h3>
+            <p>
+              Um processo com uso intensivo de CPU requer mais tempo de processamento e passa mais tempo
+              em estado de execução.
+            </p>
+            <div class="exemplo">
+              <p>
+                Exemplo: compactação de arquivos, renderização de vídeo ou cálculo matemático pesado.
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <h3>Processo I/O-bound</h3>
+            <p>
+              Um processo com uso intensivo de entrada e saída requer mais tempo esperando dispositivos,
+              como disco, teclado, rede ou impressora.
+            </p>
+            <div class="exemplo">
+              <p>
+                Exemplo: leitura de arquivos grandes, download pela rede ou impressão de documentos.
+              </p>
+            </div>
+            
+          </article>
+        </div>
+
+        
+
+
+        
+      </section>
+
+      <section id="componentes">
+        <h2>Componentes de um Sistema Operacional</h2>
+
+        <p>
+          Um sistema operacional possui componentes responsáveis por permitir a interação com o usuário
+          e o controle dos recursos do computador. Dois componentes fundamentais são o <strong>shell</strong>
+          e o <strong>kernel (núcleo)</strong>.
+        </p>
+
+        <div class="card-grid">
+          <article>
+            <h3>Shell</h3>
+            <p>
+              É a camada mais externa do sistema operacional. Lida com a interação do usuário,
+              interpreta entradas e apresenta saídas.
+            </p>
+            <span class="pill">Interface</span>
+            <span class="pill">Comandos</span>
+            <span class="pill">Interação</span>
+          </article>
+
+          <article>
+            <h3>Kernel</h3>
+            <p>
+              É o componente central do sistema operacional. Atua como principal interface entre
+              o sistema operacional e o hardware.
+            </p>
+            <span class="pill">CPU</span>
+            <span class="pill">Memória</span>
+            <span class="pill">Dispositivos</span>
+          </article>
+        </div>
+
+        <div class="diagram">
+          <svg viewBox="0 0 760 220" role="img" aria-label="Fluxo usuário shell kernel hardware">
+            <rect x="40" y="80" width="135" height="60" rx="12" fill="#dbeafe" stroke="#2e75b6" stroke-width="2"/>
+            <text x="107" y="115" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f4e79">Usuário</text>
+
+            <rect x="225" y="80" width="135" height="60" rx="12" fill="#dcfce7" stroke="#3a9d5d" stroke-width="2"/>
+            <text x="292" y="115" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f4e79">Shell</text>
+
+            <rect x="410" y="80" width="135" height="60" rx="12" fill="#fef3c7" stroke="#d4a017" stroke-width="2"/>
+            <text x="477" y="115" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f4e79">Kernel</text>
+
+            <rect x="595" y="80" width="135" height="60" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+            <text x="662" y="115" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f4e79">Hardware</text>
+
+            <line x1="175" y1="110" x2="225" y2="110" stroke="#475569" stroke-width="2" marker-end="url(#arrow3)"/>
+            <line x1="360" y1="110" x2="410" y2="110" stroke="#475569" stroke-width="2" marker-end="url(#arrow3)"/>
+            <line x1="545" y1="110" x2="595" y2="110" stroke="#475569" stroke-width="2" marker-end="url(#arrow3)"/>
+
+            <defs>
+              <marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="observacao">
+          <h3>Observação</h3>
+          <p>
+            O usuário normalmente não acessa o hardware diretamente. Ele interage com o shell,
+            o shell envia solicitações ao sistema, o kernel controla os recursos e o hardware executa
+            as operações físicas.
+          </p>
+        </div>
+      </section>
+
+      <section id="kernel">
+        <h2>Kernel</h2>
+
+        <p>
+          O kernel é a parte central de um sistema operacional. Ele atua como uma ponte entre
+          os aplicativos de software e o hardware do computador.
+        </p>
+
+        <p>
+          Ele gerencia recursos como CPU, memória e dispositivos, garantindo que diferentes partes
+          do sistema funcionem em conjunto de forma eficiente e segura. Também executa tarefas como
+          rodar programas, acessar arquivos e conectar-se a dispositivos como impressoras e teclados.
+        </p>
+
+        <div class="definicao">
+          <h3>Definição</h3>
+          <p>
+            <strong>Kernel</strong> é o núcleo do sistema operacional. Ele controla recursos críticos
+            do computador e permite que os programas usem o hardware por meio de interfaces seguras.
+          </p>
+        </div>
+
+        
+
+      </section>
+
+      <section id="funcoes-kernel">
+        <h2>Funções do Kernel</h2>
+
+        <p>
+          O kernel é responsável por diversas funções críticas que garantem o funcionamento do sistema.
+        </p>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <h3>Gestão de processos</h3>
+            <p>Controla a criação, execução, troca e finalização de processos.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Gerenciamento de memória</h3>
+            <p>Aloca e libera memória, gerencia memória virtual, proteção e compartilhamento.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Gerenciamento de dispositivos</h3>
+            <p>Controla dispositivos de entrada e saída por meio de drivers.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Sistema de arquivos</h3>
+            <p>Gerencia operações com arquivos e oferece interface para os aplicativos.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Gerenciamento de recursos</h3>
+            <p>Controla tempo de CPU, espaço em disco, memória e largura de banda da rede.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Segurança</h3>
+            <p>Aplica permissões, autenticação e controle de acesso.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Comunicação entre processos</h3>
+            <p>Facilita a troca de informações entre processos.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="funcionamento-kernel">
+        <h2>Funcionamento do Kernel</h2>
+
+        <p>
+          O kernel é a primeira parte do sistema operacional carregada na memória durante a inicialização
+          e permanece residente enquanto o sistema estiver em execução.
+        </p>
+
+        <p>
+          Ele opera em <strong>modo privilegiado</strong>, também chamado de <strong>modo kernel</strong>.
+          Esse modo é separado do <strong>modo usuário</strong>, usado pelos aplicativos. Essa separação
+          impede que programas comuns acessem diretamente o hardware ou recursos críticos.
+        </p>
+
+        <figure class="diagram">
+          <img src="kernel.png" alt="Funcionamento do kernel no sistema operacional">
+        </figure>
+
+        <article>
+          <h3>Etapas básicas</h3>
+          <ol>
+            <li>O aplicativo faz uma solicitação ao kernel por meio de uma chamada de sistema ou interrupção de software.</li>
+            <li>O kernel alterna do modo usuário para o modo kernel.</li>
+            <li>O kernel executa a operação solicitada, como entrada e saída de arquivos, criação de processos ou alocação de memória.</li>
+            <li>Ao concluir, o kernel retorna o resultado ou uma mensagem de erro para o espaço do usuário.</li>
+            <li>O kernel realiza troca de contexto quando necessário, permitindo a multitarefa. A troca de contexto é o mecanismo do 
+              Kernel do Sistema Operacional que salva o estado de um processo atual para pausá-lo e carrega o estado de um novo processo para retomá-lo.</li>
+          </ol>
+        </article>
+
+        <div class="observacao">
+          <h3>Observação</h3>
+          <p>
+            A troca de contexto ocorre quando o sistema operacional salva o estado de um processo
+            e carrega o estado de outro. Isso permite alternar rapidamente entre processos.
+          </p>
+        </div>
+      </section>
+
+      <section id="shell">
+        <h2>Shell</h2>
+
+        <p>
+          O shell permite que os usuários interajam com o sistema operacional. Ele atua como uma ponte
+          entre o usuário e o kernel, traduzindo entradas do usuário em ações executadas pelo sistema.
+        </p>
+
+        <p>
+          Shells podem ser baseados em linha de comando ou em interfaces gráficas.
+        </p>
+
+        <div class="definicao">
+          <h3>Definição</h3>
+          <p>
+            <strong>Shell</strong> é a interface usada para enviar comandos ao sistema operacional
+            e receber respostas. Pode ser textual, como uma linha de comando, ou gráfico, com janelas,
+            ícones e menus.
+          </p>
+        </div>
+
+
+        <div class="exemplo">
+          <h3>Exemplo</h3>
+          <p>
+            Quando um usuário digita um comando no terminal para listar arquivos, o shell interpreta
+            o comando e solicita ao kernel a execução da operação correspondente.
+          </p>
+        </div>
+      </section>
+
+      <section id="cli-gui">
+        <h2>CLI versus GUI</h2>
+
+        <p>
+          Existem diferentes formas de interação com o sistema operacional. Duas das mais comuns são
+          a interface de linha de comando e a interface gráfica.
+        </p>
+
+        <article>
+          <h3>Shell de Linha de Comando</h3>
+          <p>
+            A <strong>CLI</strong>, ou <em>Command-Line Interface</em>, fornece uma interface textual
+            em que os usuários digitam comandos para executar tarefas específicas. Ela é leve, rápida
+            e muito usada por desenvolvedores e administradores de sistemas.
+            
+          </p>
+        </article>
+
+        <article>
+          <h3>Interface Gráfica</h3>
+          <p>
+            A <strong>GUI</strong>, ou <em>Graphical User Interface</em>, permite interagir com o sistema
+            usando janelas, ícones, menus, botões e ponteiro do mouse, sem necessidade de digitar comandos
+            para todas as ações.
+          </p>
+        </article>
+        <figure class="diagram">
+              <img src="gui_cli.png" alt="Funcionamento do kernel no sistema operacional">
+        </figure>
+        <table>
+          <thead>
+            <tr>
+              <th>Aspecto</th>
+              <th>CLI - Interface de Linha de Comando</th>
+              <th>GUI - Interface Gráfica</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Forma de interação</td>
+              <td>Comandos digitados pelo usuário.</td>
+              <td>Janelas, ícones, menus e botões.</td>
+            </tr>
+            <tr>
+              <td>Facilidade para iniciantes</td>
+              <td>Exige conhecimento técnico e memorização de comandos.</td>
+              <td>Mais intuitiva para iniciantes por usar elementos visuais.</td>
+            </tr>
+            <tr>
+              <td>Consumo de recursos</td>
+              <td>Leve, utiliza menos memória e processamento.</td>
+              <td>Consome mais recursos do sistema.</td>
+            </tr>
+            <tr>
+              <td>Velocidade em tarefas avançadas</td>
+              <td>Mais rápida e precisa para automação e tarefas complexas.</td>
+              <td>Pode ser mais lenta para tarefas repetitivas ou avançadas.</td>
+            </tr>
+            <tr>
+              <td>Uso comum</td>
+              <td>Administração de sistemas, servidores, scripts e desenvolvimento.</td>
+              <td>Uso cotidiano, navegação por arquivos, aplicativos e configurações visuais.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="observacao">
+          <h3>Observação</h3>
+          <p>
+            CLI e GUI não são opostas em todos os contextos. Muitos sistemas oferecem as duas opções:
+            a GUI para facilidade de uso e a CLI para controle avançado e automação.
+          </p>
+        </div>
+      </section>
+
+      <section id="sistemas-comuns">
+        <h2>Sistemas Operacionais Comuns</h2>
+
+        <p>
+          Existem vários sistemas operacionais, cada um com características próprias e áreas de uso mais
+          comuns.
+        </p>
+
+        <div>
+          <article>
+            <h3>Windows</h3>
+            <p>
+              Desenvolvido pela Microsoft. É usado em computadores pessoais, ambientes corporativos
+              e jogos.
+            </p>
+          </article>
+
+          <article>
+            <h3>macOS</h3>
+            <p>
+              Desenvolvido pela Apple. É usado em computadores pessoais, ambientes profissionais e áreas
+              criativas, como design, edição de vídeo e produção musical.
+            </p>
+          </article>
+
+          <article>
+            <h3>Linux</h3>
+            <p>
+              Criado por Linus Torvalds e mantido por uma ampla comunidade de código aberto, além de
+              organizações como Linux Foundation, Red Hat e Canonical. É muito usado em servidores,
+              centros de dados, desenvolvimento e também por usuários avançados.
+            </p>
+          </article>
+
+          <article>
+            <h3>Unix</h3>
+            <p>
+              Desenvolvido originalmente nos Laboratórios Bell da AT&amp;T. Possui diversas versões
+              comerciais e de código aberto, sendo usado em servidores, estações de trabalho, pesquisa
+              e ambientes acadêmicos.
+            </p>
+          </article>
+        </div>
+
+        <div class="observacao">
+          <h3>O que é código aberto?</h3>
+          <p>
+            Software de código aberto, ou <em>open source</em>, é aquele cujo código-fonte pode ser usado,
+            examinado, alterado e redistribuído por outras pessoas. Em geral, seu desenvolvimento ocorre
+            por colaboração aberta.
+          </p>
+        </div>
+      </section>
+
+      <section id="exercicios">
+        <h2>Exercícios de Revisão</h2>
+
+        <div class="exercicios">
+          <h3>Questões conceituais</h3>
+          <ol>
+            <li>Explique, com suas palavras, o que é um processo.</li>
+            <li>Qual é a diferença entre programa e processo?</li>
+            <li>Por que um mesmo programa pode gerar vários processos?</li>
+            <li>Como um processo é organizado na memória?</li>
+            <li>Por que a gestão de processos é importante para o sistema operacional?</li>
+            <li>Qual é a diferença entre processos CPU-bound e I/O-bound?</li>
+            <li>O que é o kernel?</li>
+            <li>Cite três funções do kernel.</li>
+            <li>Por que os aplicativos comuns não devem acessar diretamente o hardware?</li>
+            <li>Explique o fluxo: usuário → shell → kernel → hardware.</li>
+            <li>O que é o shell?</li>
+            <li>Qual é a diferença entre CLI e GUI?</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>
+      Material didático em HTML sobre processos e componentes de um sistema operacional.
+    </p>
+  </footer>
+
+  <script>
+    const toggleButton = document.querySelector('.menu-toggle');
+    const overlay = document.querySelector('#menuOverlay');
+    const links = document.querySelectorAll('nav a');
+
+    function toggleMenu() {
+      const isOpen = document.body.classList.toggle('menu-open');
+      toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    toggleButton.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        if (document.body.classList.contains('menu-open')) {
+          toggleMenu();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
