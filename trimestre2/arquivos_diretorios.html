@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquivos, Sistemas de Arquivos e Diretórios</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:260px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-280px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0;}
+  nav.sumario ol{padding-left:18px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  /* véu escurecido atrás do conteúdo quando o menu está aberto; clicar nele fecha o menu */
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:820px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  figure{margin:26px 0; text-align:center;}
+  figure img, figure svg{max-width:100%; height:auto; border:1px solid var(--borda); border-radius:6px; background:#fff;}
+  figcaption{font-size:0.88em; color:#5a6a75; margin-top:8px; font-style:italic;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  ul, ol{margin:10px 0; padding-left:24px;}
+  .exercicios ol > li{margin-bottom:10px;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#7a8a94;}
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+  }
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle">☰</label>
+  <span class="titulo-topo">Sistemas Operacionais</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#intro">O conceito de arquivo</a></li>
+    <li><a href="#atributos">Atributos e operações</a></li>
+    <li><a href="#formatos">Formatos e identificação</a></li>
+    <li><a href="#sistema-arquivos">Sistemas de arquivos</a></li>
+    <li><a href="#volumes">Volumes, partições e montagem</a></li>
+    <li><a href="#diretorios">Diretórios</a></li>
+    <li><a href="#caminhos">Caminhos de acesso</a></li>
+    <li><a href="#atalhos">Atalhos: links simbólicos e físicos</a></li>
+    <li><a href="#populares">Sistemas de arquivos populares</a></li>
+    <li><a href="#exercicios">Exercícios</a></li>
+    <li><a href="#creditos">Créditos</a></li>
+  </ol>
+</nav>
+<main>
+  <h1>Arquivos, Sistemas de Arquivos e Diretórios</h1>
+  <p class="subtitulo">Conceitos fundamentais, com comparação entre Windows e Linux</p>
+
+  <h2 id="intro">1. O conceito de arquivo</h2>
+  <p>Desde os primórdios da computação, existe a necessidade de armazenar informações para uso posterior, como programas e dados. Boa parte do uso de um computador consiste em recuperar e apresentar informações previamente armazenadas: documentos, fotografias, músicas e vídeos. O próprio sistema operacional também precisa manter informações armazenadas, como programas, bibliotecas e arquivos de configuração. Para organizar esse armazenamento surgiu o conceito de <strong>arquivo</strong>.</p>
+
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    Um <strong>arquivo</strong> é uma sequência de bytes armazenada em um dispositivo físico não volátil (como um SSD ou HD), que preserva seu conteúdo mesmo quando o computador é desligado. Cada arquivo possui um nome que permite sua localização e acesso.
+  </div>
+
+  <p>Do ponto de vista do usuário e das aplicações, o arquivo é a unidade básica de armazenamento persistente de informação. Arquivos são extremamente versáteis: podem conter desde um texto com poucos caracteres até vídeos com dezenas de gigabytes.</p>
+
+  <p>Como um dispositivo de armazenamento pode conter milhões de arquivos, eles são organizados em estruturas hierárquicas chamadas <strong>diretórios</strong> (ou pastas), o que facilita a localização e o acesso pelos usuários. A figura a seguir ilustra essa organização.</p>
+
+<figure>
+    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\estrutura_hierarquica_diretorios.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <figcaption>Figura 1 — Estrutura hierárquica de diretórios e arquivos (baseado em Maziero, Cap. 22).</figcaption>
+  </figure>
+
+  <p>A organização do conteúdo de arquivos e diretórios dentro de um dispositivo físico é chamada de <strong>sistema de arquivos</strong>. Existem vários sistemas de arquivos: <strong>NTFS</strong> (Windows), <strong>Ext2/Ext3/Ext4</strong> (Linux), <strong>HFS/APFS</strong> (macOS) e <strong>FAT</strong> (usado em pendrives, câmeras e players MP3).</p>
+
+  <p>Um dispositivo físico é estruturado em um ou mais <strong>volumes</strong> (ou partições); cada volume pode armazenar um sistema de arquivos próprio. Assim, um mesmo disco pode conter volumes com sistemas de arquivos diferentes, como FAT, NTFS ou Ext4.</p>
+
+  <h2 id="atributos">2. Atributos e operações sobre arquivos</h2>
+  <p>Além do conteúdo, um arquivo é caracterizado por <strong>atributos</strong> (ou metadados) — informações adicionais sobre o arquivo — e por <strong>operações</strong> que podem ser realizadas sobre ele.</p>
+
+  <h3>Atributos mais comuns</h3>
+  <table>
+    <tr><th>Atributo</th><th>Descrição</th></tr>
+    <tr><td>Nome</td><td>String que identifica o arquivo para o usuário: "foto1.jpg", "documento.pdf".</td></tr>
+    <tr><td>Tipo</td><td>Formato dos dados (texto, imagem, vídeo). Muitas vezes indicado pela extensão do nome.</td></tr>
+    <tr><td>Tamanho</td><td>Tamanho do conteúdo, geralmente em bytes.</td></tr>
+    <tr><td>Datas</td><td>Datas de criação, último acesso e última modificação.</td></tr>
+    <tr><td>Proprietário</td><td>Em sistemas multiusuário, cada arquivo tem um dono.</td></tr>
+    <tr><td>Permissões de acesso</td><td>Quais usuários podem ler, escrever ou remover o arquivo.</td></tr>
+    <tr><td>Localização</td><td>Dispositivo e posição onde o arquivo está armazenado.</td></tr>
+  </table>
+
+  <h3>Operações básicas</h3>
+  <p>O acesso aos arquivos é feito por meio de chamadas de sistema e funções de bibliotecas. As operações básicas são:</p>
+  <ul>
+    <li><strong>Criar</strong> — aloca espaço no dispositivo e define os atributos iniciais do arquivo;</li>
+    <li><strong>Abrir</strong> — solicita ao sistema operacional acesso ao arquivo antes de ler/escrever;</li>
+    <li><strong>Ler</strong> — transfere dados do arquivo para a memória da aplicação;</li>
+    <li><strong>Escrever</strong> — transfere dados da aplicação para o arquivo;</li>
+    <li><strong>Fechar</strong> — informa ao sistema que o arquivo não é mais necessário;</li>
+    <li><strong>Remover</strong> — elimina o arquivo, liberando o espaço ocupado;</li>
+    <li><strong>Alterar atributos</strong> — modifica nome, permissões, datas, etc.</li>
+  </ul>
+  <div class="caixa exemplo">
+    <strong class="rotulo">Exemplo</strong>
+    Copiar um arquivo A para um novo arquivo B envolve várias operações básicas em sequência: abrir A, criar e abrir B, ler o conteúdo de A e escrever em B, e por fim fechar A e B.
+  </div>
+
+  <h2 id="formatos">3. Formatos e identificação de arquivos</h2>
+  <p>Na forma mais simples, um arquivo contém uma sequência de bytes que pode representar textos, imagens, vídeos ou código executável. O núcleo do sistema operacional geralmente reconhece poucos formatos (como executáveis); os demais são vistos apenas como sequências de bytes, cabendo às aplicações interpretá-los.</p>
+
+  <p>Um problema importante é: como reconhecer o tipo de conteúdo de um arquivo? Existem três abordagens principais:</p>
+  <ul>
+    <li><strong>Extensão do nome</strong> — a forma mais usada: "praia.jpg", "musica.mp3". Introduzida pelo DOS nos anos 1980, com o padrão "8.3" (8 caracteres de nome + 3 de extensão).</li>
+    <li><strong>Números mágicos (magic numbers)</strong> — bytes no início do conteúdo que identificam o tipo, independentemente do nome. Usados pelo comando <code>file</code> em sistemas UNIX.</li>
+    <li><strong>Tipos MIME</strong> — padrão "tipo/subtipo" usado para identificar arquivos transferidos por e-mail ou na Web, como <code>text/html</code> ou <code>image/png</code>.</li>
+  </ul>
+
+  <table>
+    <tr><th>Tipo de arquivo</th><th>Bytes iniciais (magic number)</th></tr>
+    <tr><td>Documento PDF</td><td><code>%PDF</code></td></tr>
+    <tr><td>Imagem GIF</td><td><code>GIF89a</code></td></tr>
+    <tr><td>Imagem JPEG</td><td><code>0xFF D8 FF</code></td></tr>
+    <tr><td>Arquivo ZIP</td><td><code>0x50 4B 03 04</code></td></tr>
+  </table>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    Arquivos de texto também variam entre sistemas: no Linux/UNIX, as linhas terminam com o caractere New Line (<code>\n</code>); no Windows, terminam com Carriage Return + New Line (<code>\r\n</code>). Essa diferença pode causar problemas ao transferir arquivos de texto entre os dois sistemas.
+  </div>
+
+  <h2 id="sistema-arquivos">4. Sistemas de arquivos</h2>
+  <p>Um <strong>sistema de arquivos</strong> é o subsistema do sistema operacional responsável por implementar o conceito de arquivo sobre o armazenamento bruto oferecido pelo hardware. Ele resolve problemas que vão do acesso físico ao disco até a interface de alto nível usada pelos programadores.</p>
+
+  <p>De forma simplificada, a implementação de um sistema de arquivos é organizada em camadas:</p>
+
+  <figure>
+    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\camadas_sistemas_arquivos.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <figcaption>Figura 2 — Camadas de um sistema de arquivos: da aplicação até o armazenamento físico. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>Aplicação</strong> — solicita operações de leitura, escrita e remoção de arquivos;</li>
+    <li><strong>Sistema de arquivos lógico</strong> — gerencia metadados, nomes de arquivos, diretórios e permissões de acesso;</li>
+    <li><strong>Sistema de arquivos virtual (VFS)</strong> — camada que permite que diferentes sistemas de arquivos (NTFS, Ext4, FAT...) sejam acessados por uma interface única;</li>
+    <li><strong>Sistema de arquivos físico</strong> — realiza a gravação efetiva dos blocos de dados no disco.</li>
+  </ul>
+
+  <p>Essa camada de abstração (o VFS) é o que permite, por exemplo, que um mesmo sistema operacional acesse simultaneamente um disco formatado em NTFS, um pendrive em FAT32 e uma pasta compartilhada pela rede — tudo através das mesmas operações de abrir, ler e escrever arquivos.</p>
+
+  <h2 id="volumes">5. Volumes, partições e montagem: Windows x Linux</h2>
+  <p>Um disco é dividido em uma pequena área reservada (com a tabela de partições e o código de inicialização do sistema) e uma ou mais <strong>partições</strong>. Cada partição pode ser formatada de forma independente, recebendo um sistema de arquivos próprio. O termo <strong>volume</strong> é usado para designar um espaço de armazenamento de dados do ponto de vista do sistema operacional; na forma mais simples, cada volume corresponde a uma partição.</p>
+
+  <p>Antes de ser usado, todo volume precisa ser <strong>montado</strong>: o sistema operacional lê as informações do volume e cria as estruturas necessárias para que os processos possam acessar seus arquivos. É aqui que Windows e Linux adotam abordagens visivelmente diferentes.</p>
+
+    <figure>
+    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\windows_linux_volumes.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <figcaption>Figura 3 — No Windows, cada volume recebe uma letra de unidade (C:\, D:\...). No Linux, todos os volumes são "encaixados" em pontos de montagem dentro de uma única árvore de diretórios, a partir da raiz (/). (Baseado em Maziero, Cap. 24)</figcaption>
+  </figure>
+
+  <table>
+    <tr><th>Aspecto</th><th>Windows</th><th>Linux</th></tr>
+    <tr><td>Identificação de volume</td><td>Letra de unidade: C:\, D:\, E:\...</td><td>Ponto de montagem dentro da árvore: /, /home, /media/usb</td></tr>
+    <tr><td>Separador de caminho</td><td>Barra invertida <code>\</code></td><td>Barra <code>/</code></td></tr>
+    <tr><td>Sistema de arquivos padrão</td><td>NTFS</td><td>Ext4 (mais comum)</td></tr>
+    <tr><td>Pendrive/CD-ROM</td><td>Nova letra de unidade (ex: E:\)</td><td>Montado em /media ou /mnt</td></tr>
+  </table>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    Apesar da abordagem tradicional por letras de unidade, o próprio NTFS também suporta a montagem de volumes como subdiretórios de uma árvore, de forma semelhante ao Linux — recurso pouco usado por usuários comuns, mas disponível no Windows.
+  </div>
+
+  <h2 id="diretorios">6. Diretórios</h2>
+  <p>Um <strong>diretório</strong> (também chamado de pasta ou folder) é um contêiner de arquivos e de outros diretórios. Assim como os arquivos, diretórios possuem nome e atributos. Todo sistema de arquivos tem um <strong>diretório raiz</strong> (root directory), a partir do qual toda a árvore de diretórios se organiza.</p>
+
+  <p>Do ponto de vista de implementação, um diretório é, na prática, um arquivo especial cujo conteúdo é uma tabela de entradas: cada entrada aponta para um arquivo, um subdiretório ou um atalho. Ou seja, <strong>um diretório não contém fisicamente os arquivos — ele apenas os relaciona</strong>.</p>
+
+  <p>No Linux, a estrutura de diretórios segue um padrão chamado <strong>FHS</strong> (Filesystem Hierarchy Standard), com diretórios de papel bem definido logo abaixo da raiz:</p>
+  <table>
+    <tr><th>Diretório</th><th>Função</th></tr>
+    <tr><td><code>/bin</code>, <code>/sbin</code></td><td>Programas executáveis essenciais do sistema.</td></tr>
+    <tr><td><code>/etc</code></td><td>Arquivos de configuração do sistema.</td></tr>
+    <tr><td><code>/home</code></td><td>Diretórios pessoais dos usuários (equivalente a C:\Users no Windows).</td></tr>
+    <tr><td><code>/dev</code></td><td>Arquivos que representam dispositivos de hardware.</td></tr>
+    <tr><td><code>/var</code></td><td>Dados variáveis: logs, filas de impressão, caches.</td></tr>
+    <tr><td><code>/media</code>, <code>/mnt</code></td><td>Pontos de montagem de mídias removíveis e volumes externos.</td></tr>
+  </table>
+
+  <p>No Windows, embora exista uma organização similar por convenção — como <code>C:\Windows</code>, <code>C:\Program Files</code> e <code>C:\Users</code> — não há um padrão tão rigidamente definido quanto o FHS do Linux.</p>
+
+  <p>A maioria dos sistemas operacionais também define, para cada processo em execução, um <strong>diretório de trabalho</strong> (working directory): o local usado por padrão para criar ou abrir arquivos, quando o caminho completo não é informado.</p>
+
+  <h2 id="caminhos">7. Caminhos de acesso</h2>
+  <p>Como os arquivos estão espalhados pela hierarquia de diretórios, é preciso conhecer sua localização completa — não apenas seu nome — para poder abri-los. Essa localização é chamada de <strong>caminho de acesso</strong> (path).</p>
+
+  <figure>
+    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\caminho_acesso_windows.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <figcaption>Figura 4 — Caminho de acesso em um sistema Windows: C:\Users\Maziero\public_html\index.html (baseado em Maziero, Cap. 25).</figcaption>
+  </figure>
+
+  <p>O caractere separador de nomes no caminho depende do sistema: o Windows usa <code>\</code>, enquanto sistemas UNIX/Linux usam <code>/</code>. Assim, o mesmo arquivo poderia ser representado como:</p>
+  <ul>
+    <li>Windows: <code>C:\Users\Maziero\public_html\index.html</code></li>
+    <li>Linux: <code>/home/maziero/public_html/index.html</code></li>
+  </ul>
+
+  <p>Existem duas formas principais de indicar um caminho:</p>
+  <ul>
+    <li><strong>Caminho absoluto</strong> — parte sempre do diretório raiz. Ex: <code>/usr/local/share/fortunes/brasil.dat</code> ou <code>C:\Windows\System32</code>.</li>
+    <li><strong>Caminho relativo</strong> — parte do diretório de trabalho atual, podendo usar elementos especiais: <code>.</code> (o próprio diretório) e <code>..</code> (o diretório pai). Ex: <code>../../docs/proj1.pdf</code>.</li>
+  </ul>
+
+  <h2 id="atalhos">8. Atalhos: links simbólicos e físicos</h2>
+  <p>Às vezes é útil ter um mesmo arquivo (ou diretório) referenciado em vários lugares do sistema de arquivos, sem duplicar seu conteúdo. Para isso existem os <strong>atalhos</strong> (links), que criam referências indiretas a um arquivo já existente.</p>
+
+  <figure>
+    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\simbolico_fisico.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <figcaption>Figura 5 — Diferença entre link simbólico e link físico (hard link), com base em Maziero, Cap. 25.</figcaption>
+  </figure>
+
+  <table>
+    <tr><th></th><th>Link simbólico (soft link)</th><th>Link físico (hard link)</th></tr>
+    <tr><td>Como funciona</td><td>Arquivo pequeno contendo o caminho até o alvo</td><td>Referência direta ao mesmo conteúdo no disco</td></tr>
+    <tr><td>Pode apontar para outro disco/volume?</td><td>Sim</td><td>Não — precisa estar no mesmo volume</td></tr>
+    <tr><td>Pode apontar para diretórios?</td><td>Sim</td><td>Geralmente não</td></tr>
+    <tr><td>Se o arquivo original for apagado</td><td>O link fica "quebrado" (broken link)</td><td>O conteúdo permanece acessível pelas outras referências</td></tr>
+    <tr><td>Suporte no Windows (NTFS)</td><td>Sim (desde o Windows Vista)</td><td>Sim</td></tr>
+    <tr><td>Suporte no Linux</td><td>Sim (comando <code>ln -s</code>)</td><td>Sim (comando <code>ln</code>)</td></tr>
+  </table>
+
+  <h2 id="populares">9. Sistemas de arquivos populares</h2>
+  <p>Cada sistema operacional tem preferência por determinados sistemas de arquivos, embora vários deles suportem múltiplos formatos:</p>
+  <table>
+    <tr><th>Sistema de arquivos</th><th>Usado principalmente em</th></tr>
+    <tr><td>NTFS (New Technology File System)</td><td>Windows — suporta permissões avançadas, compressão e criptografia.</td></tr>
+    <tr><td>FAT / FAT32 / exFAT</td><td>Pendrives, cartões de memória, câmeras digitais; sistema mais antigo e simples.</td></tr>
+    <tr><td>Ext2 / Ext3 / Ext4</td><td>Linux — Ext4 é o mais usado atualmente, com journaling (registro de alterações) para maior confiabilidade.</td></tr>
+    <tr><td>HFS+ / APFS</td><td>macOS.</td></tr>
+  </table>
+
+  <p>Além disso, existem diferentes formas de organizar a estrutura de diretórios em um sistema de arquivos:</p>
+  <ul>
+    <li><strong>Diretório de nível único</strong> — um único diretório para todos os usuários (usado nos primeiros sistemas de arquivos);</li>
+    <li><strong>Diretório de dois níveis</strong> — um diretório separado para cada usuário;</li>
+    <li><strong>Diretório em árvore</strong> — a estrutura usada atualmente pela grande maioria dos sistemas (Windows e Linux inclusos), permitindo diretórios dentro de diretórios sem limite prático de profundidade.</li>
+  </ul>
+
+  <h2 id="exercicios">10. Exercícios</h2>
+  <div class="exercicios">
+  <ol>
+    <li>O que é um arquivo? Cite pelo menos quatro atributos que ele pode possuir.</li>
+    <li>Quais são as operações básicas que podem ser realizadas sobre um arquivo? Descreva-as brevemente.</li>
+    <li>Explique as três formas mais comuns de identificar o tipo de conteúdo de um arquivo (extensão, número mágico, tipo MIME), indicando vantagens e desvantagens de cada uma.</li>
+    <li>O que é um sistema de arquivos? Qual é o papel do VFS (Virtual File System)?</li>
+    <li>Explique a principal diferença entre a forma como o Windows e o Linux organizam os volumes de armazenamento (letras de unidade x pontos de montagem).</li>
+    <li>O que é um diretório, do ponto de vista de implementação? Por que se diz que um diretório "não contém" fisicamente os arquivos?</li>
+    <li>Explique a diferença entre um caminho de acesso absoluto e um caminho relativo. Dê um exemplo de cada um, no Windows e no Linux.</li>
+    <li>Explique a diferença entre um link simbólico e um link físico (hard link). O que acontece com cada um se o arquivo original for apagado?</li>
+    <li>Cite três sistemas de arquivos e o sistema operacional em que cada um é mais usado.</li>
+    <li>Sobre as afirmações a seguir, indique quais são incorretas, justificando sua resposta:
+      <ol type="a">
+        <li>No Windows, cada volume ou partição recebe obrigatoriamente uma letra de unidade, sem exceção.</li>
+        <li>Um link simbólico aponta diretamente para o conteúdo do arquivo no disco, e não para um caminho.</li>
+        <li>No Linux, diferentes volumes (como um disco rígido e um pendrive) podem ser acessados dentro da mesma árvore de diretórios, a partir de pontos de montagem.</li>
+        <li>Um diretório é, na prática, um tipo especial de arquivo que contém uma tabela de entradas.</li>
+        <li>A extensão do nome de um arquivo é a única forma possível de identificar seu tipo de conteúdo.</li>
+      </ol>
+    </li>
+  </ol>
+  </div>
+
+  <footer id="creditos">
+    <h2 style="border:none; margin-top:20px;">11. Créditos e referências</h2>
+    <p>Material organizado didaticamente a partir dos Capítulos 22, 24 e 25 do livro <strong>Sistemas Operacionais: Conceitos e Mecanismos</strong>, de Carlos Maziero (UFPR), e do artigo <a href="https://www.geeksforgeeks.org/operating-systems/file-systems-in-operating-system/" target="_blank" rel="noopener">"File Systems in Operating System"</a>, do GeeksforGeeks.</p>
+    <p><strong>Referência:</strong> MAZIERO, Carlos. <em>Sistemas Operacionais: Conceitos e Mecanismos</em>. Editora da UFPR, 2019. Disponível sob licença Creative Commons.</p>
+    <p>Arquivo HTML autocontido, com CSS interno, menu lateral responsivo, figuras ilustrativas e exercícios ao final.</p>
+  </footer>
+</main>
+</div>
+</body>
+</html>
