@@ -129,7 +129,7 @@
   <p>Como um dispositivo de armazenamento pode conter milhões de arquivos, eles são organizados em estruturas hierárquicas chamadas <strong>diretórios</strong> (ou pastas), o que facilita a localização e o acesso pelos usuários. A figura a seguir ilustra essa organização.</p>
 
 <figure>
-    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\estrutura_hierarquica_diretorios.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <img src="estrutura_hierarquica_diretorios.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
     <figcaption>Figura 1 — Estrutura hierárquica de diretórios e arquivos (baseado em Maziero, Cap. 22).</figcaption>
   </figure>
 
@@ -197,7 +197,7 @@
   <p>De forma simplificada, a implementação de um sistema de arquivos é organizada em camadas:</p>
 
   <figure>
-    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\camadas_sistemas_arquivos.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <img src="camadas_sistemas_arquivos.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
     <figcaption>Figura 2 — Camadas de um sistema de arquivos: da aplicação até o armazenamento físico. (Fonte: GeeksforGeeks)</figcaption>
   </figure>
 
@@ -216,7 +216,7 @@
   <p>Antes de ser usado, todo volume precisa ser <strong>montado</strong>: o sistema operacional lê as informações do volume e cria as estruturas necessárias para que os processos possam acessar seus arquivos. É aqui que Windows e Linux adotam abordagens visivelmente diferentes.</p>
 
     <figure>
-    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\windows_linux_volumes.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <img src="windows_linux_volumes.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
     <figcaption>Figura 3 — No Windows, cada volume recebe uma letra de unidade (C:\, D:\...). No Linux, todos os volumes são "encaixados" em pontos de montagem dentro de uma única árvore de diretórios, a partir da raiz (/). (Baseado em Maziero, Cap. 24)</figcaption>
   </figure>
 
@@ -257,7 +257,7 @@
   <p>Como os arquivos estão espalhados pela hierarquia de diretórios, é preciso conhecer sua localização completa — não apenas seu nome — para poder abri-los. Essa localização é chamada de <strong>caminho de acesso</strong> (path).</p>
 
   <figure>
-    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\caminho_acesso_windows.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <img src="caminho_acesso_windows.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
     <figcaption>Figura 4 — Caminho de acesso em um sistema Windows: C:\Users\Maziero\public_html\index.html (baseado em Maziero, Cap. 25).</figcaption>
   </figure>
 
@@ -277,7 +277,7 @@
   <p>Às vezes é útil ter um mesmo arquivo (ou diretório) referenciado em vários lugares do sistema de arquivos, sem duplicar seu conteúdo. Para isso existem os <strong>atalhos</strong> (links), que criam referências indiretas a um arquivo já existente.</p>
 
   <figure>
-    <img src="C:\Users\patri\OneDrive\Documentos\IFNMG2026\SWAPPSO\trimestre2\simbolico_fisico.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
+    <img src="simbolico_fisico.png" alt="Arquitetura em camadas de um sistema de arquivos: aplicação, sistema de arquivos lógico, sistema de arquivos virtual (VFS) e sistema de arquivos físico">
     <figcaption>Figura 5 — Diferença entre link simbólico e link físico (hard link), com base em Maziero, Cap. 25.</figcaption>
   </figure>
 
