@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório Prático: Arquivos, Sistemas de Arquivos e Diretórios</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+    --win: #2d7dab;
+    --lin: #b5651d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:270px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-290px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0;}
+  nav.sumario ol{padding-left:18px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:860px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa.atencao{border-left-color:#c0392b; background:#fdecea;}
+  .caixa.checkpoint{border-left-color:#1b4b6b; background:#eaf1f7;}
+  .caixa.conceito{border-left-color:#2e8b57; background:#eef7f0;}
+  .caixa.comando{border-left-color:#5a6a75; background:#f2f4f6;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  figure{margin:22px 0; text-align:center;}
+  figure svg{max-width:100%; height:auto; border:1px solid var(--borda); border-radius:6px; background:#fff; padding:10px;}
+  figcaption{font-size:0.88em; color:#5a6a75; margin-top:8px; font-style:italic;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  pre{
+    background:#20303c; color:#e8f0f5; padding:14px 16px; border-radius:6px;
+    overflow-x:auto; font-family: Consolas, "Courier New", monospace; font-size:0.9em;
+    margin:14px 0;
+  }
+  pre code{background:none; padding:0; color:inherit;}
+  ul, ol{margin:10px 0; padding-left:24px;}
+  .trilha{
+    border-radius:8px; padding:2px 22px 22px 22px; margin:30px 0;
+  }
+  .trilha-win{background:#eef6fb; border:2px solid var(--win);}
+  .trilha-lin{background:#fbf3ea; border:2px solid var(--lin);}
+  .trilha h2{margin-top:20px;}
+  .trilha-win h2{color:var(--win); border-bottom-color:var(--win);}
+  .trilha-lin h2{color:var(--lin); border-bottom-color:var(--lin);}
+  .selo{
+    display:inline-block; color:#fff; font-size:0.75em; font-weight:600;
+    padding:3px 10px; border-radius:12px; letter-spacing:.03em; text-transform:uppercase;
+    margin-left:8px; vertical-align:middle;
+  }
+  .selo-win{background:var(--win);}
+  .selo-lin{background:var(--lin);}
+  .passo{
+    display:flex; gap:14px; margin:16px 0; align-items:flex-start;
+    background:#fff; border:1px solid var(--borda); border-radius:6px; padding:12px 16px;
+  }
+  .passo .num{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    background:var(--azul); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:0.95em;
+  }
+  .trilha-win .passo .num{background:var(--win);}
+  .trilha-lin .passo .num{background:var(--lin);}
+  .passo .conteudo{flex:1;}
+  .passo .conteudo p:first-child{margin-top:0;}
+  .passo .conteudo p:last-child{margin-bottom:0;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#7a8a94;}
+  .relatorio ol > li{margin-bottom:10px;}
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+    .passo{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle">☰</label>
+  <span class="titulo-topo">Laboratório Prático — Arquivos e Diretórios</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#intro">Antes de começar</a></li>
+    <li><a href="#conceitos">Conceitos-chave da prática</a>
+      <ol>
+        <li><a href="#conc-interface">GUI x linha de comando</a></li>
+        <li><a href="#conc-caminho">O que é um caminho (path)</a></li>
+      </ol>
+    </li>
+    <li><a href="#windows">Trilha Windows</a>
+      <ol>
+        <li><a href="#win-explorer">1. Explorando pastas e atributos</a></li>
+        <li><a href="#win-extensoes">2. Extensões e magic numbers</a></li>
+        <li><a href="#win-caminhos">3. Caminhos absolutos e relativos</a></li>
+        <li><a href="#win-volumes">4. Volumes e letras de unidade</a></li>
+      </ol>
+    </li>
+    <li><a href="#linux">Trilha Linux (Debian)</a>
+      <ol>
+        <li><a href="#lin-terminal">1. Navegando pelo terminal</a></li>
+        <li><a href="#lin-atributos">2. Atributos com ls -l e file</a></li>
+        <li><a href="#lin-caminhos">3. Caminhos absolutos e relativos</a></li>
+        <li><a href="#lin-montagem">4. Volumes e pontos de montagem</a></li>
+      </ol>
+    </li>
+    <li><a href="#relatorio">Relatório final</a></li>
+    <li><a href="#creditos">Créditos</a></li>
+  </ol>
+</nav>
+<main>
+  <h1>Laboratório Prático: Arquivos, Sistemas de Arquivos e Diretórios</h1>
+  <p class="subtitulo">Atividade prática de continuação da aula teórica — Softwares, Aplicativos e Sistemas Operacionais</p>
+
+  <h2 id="intro">Antes de começar</h2>
+  <p>Nesta aula prática você vai colocar a mão na massa nos conceitos vistos na aula anterior: arquivos, atributos, sistemas de arquivos, volumes, diretórios e caminhos de acesso. O laboratório está dividido em duas trilhas independentes:</p>
+  <ul>
+    <li><strong>Trilha Windows</strong> — para quem estiver em um computador com Windows;</li>
+    <li><strong>Trilha Linux</strong> — para quem estiver em um computador com Debian.</li>
+  </ul>
+  <p>Siga <strong>apenas a trilha do computador que você estiver usando</strong>. Os dois roteiros trabalham os mesmos conceitos, então ao final você poderá comparar as respostas com um colega que usou o outro sistema operacional.</p>
+
+  <div class="caixa atencao">
+    <strong class="rotulo">Atenção</strong>
+    Todo o trabalho deve ser feito dentro de uma pasta própria, criada por você, para não bagunçar os arquivos de outros alunos que usam o mesmo computador. Nunca apague ou modifique arquivos fora dessa pasta.
+  </div>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Como entregar</strong>
+    Ao final da trilha, responda ao <a href="#relatorio">Relatório final</a> no caderno. 
+  </div>
+
+  <h2 id="conceitos">Conceitos-chave da prática</h2>
+
+  <h3 id="conc-interface">Interface gráfica (GUI) x linha de comando</h3>
+  <p>Até agora você provavelmente só usou o computador clicando em ícones, janelas e botões. Essa forma de interação é chamada de <strong>GUI</strong> (Graphical User Interface, ou Interface Gráfica do Usuário) — é o caso do Explorador de Arquivos no Windows e do aplicativo "Arquivos" no Debian.</p>
+  <p>Existe também outra forma de interagir com o sistema operacional: digitando comandos de texto em vez de clicar. Essa forma é chamada de <strong>linha de comando</strong> (ou CLI, Command Line Interface). Nela, você escreve uma instrução e o computador executa exatamente o que foi pedido.</p>
+  <div class="caixa conceito">
+    <strong class="rotulo">Conceito</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li>No <strong>Windows</strong>, o programa que abre uma linha de comando chama-se <strong>Prompt de Comando</strong> (também existe o PowerShell, mais moderno).</li>
+      <li>No <strong>Linux (Debian)</strong>, o programa equivalente chama-se <strong>Terminal</strong>.</li>
+    </ul>
+    Ou seja, "Prompt de Comando" e "Terminal" cumprem o mesmo papel em cada sistema: são a porta de entrada para a linha de comando. Nenhum dos dois é uma GUI — ambos são interfaces de texto. É o Explorador de Arquivos (Windows) e o aplicativo Arquivos/Nautilus (Debian) que são as GUIs equivalentes entre os dois sistemas.
+  </div>
+  <table>
+    <tr><th>Tipo de interface</th><th>Windows</th><th>Debian (Linux)</th></tr>
+    <tr><td>Gráfica (GUI) — clicar e arrastar</td><td>Explorador de Arquivos</td><td>Arquivos (Nautilus)</td></tr>
+    <tr><td>Linha de comando (CLI) — digitar comandos</td><td>Prompt de Comando (cmd)</td><td>Terminal</td></tr>
+  </table>
+
+  <h3 id="conc-caminho">O que é um caminho (path)?</h3>
+  <p>Como os arquivos ficam organizados dentro de uma árvore de diretórios (pastas dentro de pastas), não basta saber o <em>nome</em> de um arquivo para localizá-lo — é preciso saber também <em>onde</em> ele está. Essa localização completa, escrita como texto, é chamada de <strong>caminho de acesso</strong> (path).</p>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    Um caminho pode ser de dois tipos:
+    <ul style="margin:6px 0 0 0;">
+      <li><strong>Caminho absoluto</strong> — começa sempre a partir da raiz do sistema de arquivos e descreve a localização completa do arquivo, não importa de onde você esteja. Ex.: <code>C:\Users\Maria\lab\ci067.txt</code> (Windows) ou <code>/home/maria/lab/ci067.txt</code> (Linux).</li>
+      <li><strong>Caminho relativo</strong> — parte do diretório de trabalho atual (a pasta em que você está no momento). Usa os elementos especiais <code>.</code> (o próprio diretório atual) e <code>..</code> (o diretório pai, ou seja, "subir um nível"). Ex.: se você está em <code>lab</code>, o caminho relativo para acessar um arquivo dentro da pasta vizinha seria <code>../avaliacoes/prova.txt</code>.</li>
+    </ul>
+  </div>
+  <div class="caixa exemplo">
+    <strong class="rotulo">Exemplo</strong>
+    Imagine que você está na pasta <code>documentos</code> e quer acessar um arquivo que está na pasta <code>avaliacoes</code>, que é vizinha (as duas ficam dentro de <code>lab</code>). O caminho relativo seria <code>..\avaliacoes\arquivo.txt</code> no Windows, ou <code>../avaliacoes/arquivo.txt</code> no Linux: primeiro <code>..</code> sobe um nível (de <code>documentos</code> para <code>lab</code>), depois desce para dentro de <code>avaliacoes</code>.
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, Arial, sans-serif">
+      <!-- pasta lab (raiz do exemplo) -->
+      <rect x="300" y="20" width="60" height="14" rx="3" fill="#1b4b6b"/>
+      <rect x="270" y="34" width="140" height="70" rx="6" fill="#1b4b6b"/>
+      <text x="340" y="78" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="600">lab</text>
+
+      <!-- linhas da árvore -->
+      <path d="M340,104 V140" stroke="#8aa6b5" stroke-width="2" fill="none"/>
+      <path d="M160,140 H520" stroke="#8aa6b5" stroke-width="2" fill="none"/>
+      <path d="M160,140 V170" stroke="#8aa6b5" stroke-width="2" fill="none"/>
+      <path d="M520,140 V170" stroke="#8aa6b5" stroke-width="2" fill="none"/>
+
+      <!-- pasta documentos -->
+      <rect x="135" y="170" width="55" height="14" rx="3" fill="#2d7dab"/>
+      <rect x="110" y="184" width="100" height="64" rx="6" fill="#2d7dab"/>
+      <text x="160" y="222" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="600">documentos</text>
+
+      <!-- marcador "você está aqui" -->
+      <circle cx="222" cy="196" r="5" fill="#7a5ea8"/>
+      <text x="233" y="200" font-size="13" font-weight="600" fill="#7a5ea8">você está aqui</text>
+
+      <!-- pasta avaliacoes -->
+      <rect x="495" y="170" width="55" height="14" rx="3" fill="#2d7dab"/>
+      <rect x="470" y="184" width="100" height="64" rx="6" fill="#2d7dab"/>
+      <text x="520" y="222" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="600">avaliacoes</text>
+
+      <!-- ícone do arquivo dentro de avaliacoes -->
+      <path d="M500,260 h26 l10,10 v34 h-36 z" fill="#ffffff" stroke="#1b4b6b" stroke-width="2"/>
+      <path d="M526,260 v10 h10" fill="none" stroke="#1b4b6b" stroke-width="2"/>
+      <text x="520" y="320" text-anchor="middle" font-size="13" fill="#26333d">arquivo.txt</text>
+
+      <!-- seta tracejada do caminho percorrido -->
+      <defs>
+        <marker id="seta" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#c0392b"/>
+        </marker>
+      </defs>
+      <path d="M172,180 C190,140 280,120 340,120 C400,120 480,140 512,178"
+            stroke="#c0392b" stroke-width="2.5" fill="none" stroke-dasharray="7,5" marker-end="url(#seta)"/>
+
+      <!-- rótulos dos dois passos -->
+      <circle cx="300" cy="118" r="11" fill="#c0392b"/>
+      <text x="300" y="122" text-anchor="middle" font-size="12" fill="#ffffff" font-weight="700">1</text>
+      <text x="300" y="100" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="600">.. (sobe para lab)</text>
+
+      <circle cx="450" cy="150" r="11" fill="#c0392b"/>
+      <text x="450" y="154" text-anchor="middle" font-size="12" fill="#ffffff" font-weight="700">2</text>
+      <text x="450" y="168" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="600">desce para avaliacoes</text>
+
+      <!-- caixas com os caminhos finais -->
+      <text x="200" y="352" text-anchor="middle" font-size="13" fill="#5a6a75" font-weight="600">Windows</text>
+      <rect x="60" y="360" width="280" height="46" rx="8" fill="#20303c"/>
+      <text x="200" y="388" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="15" fill="#e8f0f5">..\avaliacoes\arquivo.txt</text>
+
+      <text x="480" y="352" text-anchor="middle" font-size="13" fill="#5a6a75" font-weight="600">Linux / Debian</text>
+      <rect x="340" y="360" width="280" height="46" rx="8" fill="#20303c"/>
+      <text x="480" y="388" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="15" fill="#e8f0f5">../avaliacoes/arquivo.txt</text>
+    </svg>
+    <figcaption>Figura 1 — Caminho relativo de <code>documentos</code> até <code>avaliacoes/arquivo.txt</code>: primeiro sobe um nível com <code>..</code>, depois desce para a pasta vizinha.</figcaption>
+  </figure>
+
+  <p>Você vai testar esse conceito na prática, tanto na trilha Windows quanto na trilha Linux, usando comandos que mostram e mudam o diretório de trabalho atual.</p>
+
+  <!-- ==================== TRILHA WINDOWS ==================== -->
+  <div class="trilha trilha-win" id="windows">
+  <h2>Trilha Windows <span class="selo selo-win">Windows</span></h2>
+  <p>Você vai usar duas interfaces: o <strong>Explorador de Arquivos</strong> (GUI) e o <strong>Prompt de Comando</strong> (linha de comando), além do Bloco de Notas.</p>
+
+  <h3 id="win-explorer">1. Explorando pastas e atributos</h3>
+
+  <div class="passo">
+    <div class="num">1</div>
+    <div class="conteudo">
+      <p>Abra o <strong>Explorador de Arquivos</strong> (ícone de pasta amarela na barra de tarefas, ou tecla <code>Windows + E</code>). Essa é a interface gráfica (GUI) do Windows para lidar com arquivos e pastas.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">2</div>
+    <div class="conteudo">
+      <p>Navegue até <strong>Área de Trabalho</strong> (Desktop) e crie uma nova pasta com o seu nome. Clique com o botão direito em um espaço vazio → <strong>Novo</strong> → <strong>Pasta</strong>. Renomeie para algo como <code>lab_SeuNome</code>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">3</div>
+    <div class="conteudo">
+      <p>Entre nessa pasta. Crie um arquivo de texto: botão direito → <strong>Novo</strong> → <strong>Documento de Texto</strong>. Renomeie para <code>ci067</code> e escreva uma frase qualquer dentro dele.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">4</div>
+    <div class="conteudo">
+      <p>Clique com o botão direito sobre o arquivo <code>ci067</code> e escolha <strong>Propriedades</strong>. Observe os atributos exibidos: tamanho, data de criação, data de modificação e localização.</p>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 1</strong>
+    Anote no seu relatório: qual o <strong>tipo</strong>, o <strong>tamanho</strong>, a <strong>data de criação</strong> e o <strong>caminho completo (localização)</strong> do arquivo <code>ci067</code>?
+  </div>
+
+  <h3 id="win-extensoes">2. Extensões e magic numbers</h3>
+  <div class="passo">
+    <div class="num">5</div>
+    <div class="conteudo">
+      <p>No Explorador de Arquivos, clique na aba <strong>Exibir</strong> (ou <strong>Ver</strong>) → marque a opção <strong>Extensões de nomes de arquivos</strong>. Agora os nomes dos arquivos passam a mostrar a extensão (por exemplo, <code>ci067.txt</code> em vez de apenas <code>ci067</code>).</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">6</div>
+    <div class="conteudo">
+      <p>Renomeie o arquivo <code>ci067.txt</code> trocando a extensão para <code>.pdf</code> (o Windows vai avisar que isso pode tornar o arquivo inutilizável — confirme mesmo assim). Tente abrir o arquivo com um duplo clique.</p>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 2</strong>
+    O arquivo abriu normalmente como PDF? O que isso mostra sobre a diferença entre a <strong>extensão do nome</strong> (o que está escrito) e o <strong>conteúdo real</strong> do arquivo (os bytes internos, o "magic number")? Volte a extensão para <code>.txt</code> antes de continuar.
+  </div>
+
+  <h3 id="win-caminhos">3. Caminhos absolutos e relativos</h3>
+  <p>Antes de continuar, revise a explicação sobre <a href="#conc-caminho">caminhos absolutos e relativos</a> na seção de conceitos. Agora você vai enxergar esses caminhos usando o <strong>Prompt de Comando</strong>, a linha de comando do Windows.</p>
+
+  <div class="passo">
+    <div class="num">7</div>
+    <div class="conteudo">
+      <p>Dentro da sua pasta <code>lab_SeuNome</code>, crie duas subpastas: <code>documentos</code> e <code>avaliacoes</code>. Mova o arquivo <code>ci067.txt</code> para dentro de <code>documentos</code>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">8</div>
+    <div class="conteudo">
+      <p>Clique na barra de endereço do Explorador (a área onde aparece o caminho, no topo da janela) enquanto estiver dentro da pasta <code>documentos</code>. Copie o caminho completo mostrado — esse é um <strong>caminho absoluto</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">9</div>
+    <div class="conteudo">
+      <p>Abra o <strong>Prompt de Comando</strong> (pesquise "cmd" no menu Iniciar). Antes de digitar, veja o que cada comando faz:</p>
+      <div class="caixa comando">
+        <strong class="rotulo">O que cada comando faz</strong>
+        <ul style="margin:6px 0 0 0;">
+          <li><code>cd &lt;pasta&gt;</code> — "change directory": muda o diretório de trabalho atual para a pasta indicada.</li>
+          <li><code>dir</code> — lista os arquivos e pastas que estão dentro do diretório atual.</li>
+          <li><code>cd ..</code> — sobe um nível, indo para o diretório pai (a pasta que contém a atual).</li>
+        </ul>
+      </div>
+      <p>Agora digite <code>cd Desktop\lab_SeuNome</code> (ajustando o nome da sua pasta) e depois <code>dir</code> para listar o conteúdo. Em seguida digite <code>cd documentos</code> e depois <code>cd ..</code> — observe para onde você volta.</p>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 3</strong>
+    Escreva o <strong>caminho absoluto</strong> do arquivo <code>ci067.txt</code> (algo como <code>C:\Users\...\Desktop\lab_SeuNome\documentos\ci067.txt</code>). Depois, explique com suas palavras o que o comando <code>cd ..</code> faz e por que isso é um exemplo de <strong>caminho relativo</strong>.
+  </div>
+
+  <h3 id="win-volumes">4. Volumes e letras de unidade</h3>
+  <div class="passo">
+    <div class="num">10</div>
+    <div class="conteudo">
+      <p>No Explorador de Arquivos, clique em <strong>Este Computador</strong> (ou "Meu Computador"). Observe as letras de unidade disponíveis (<code>C:\</code>, e outras, se houver).</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">11</div>
+    <div class="conteudo">
+      <p>Se houver um pendrive disponível no laboratório, conecte-o e observe qual letra de unidade ele recebe. Copie o arquivo <code>ci067.txt</code> para o pendrive.</p>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 4</strong>
+    Quantas letras de unidade apareceram no seu computador? Qual letra o pendrive recebeu?
+  </div>
+  </div>
+  <!-- fim trilha windows -->
+
+  <!-- ==================== TRILHA LINUX (Debian) ==================== -->
+  <div class="trilha trilha-lin" id="linux">
+  <h2>Trilha Linux (Debian) <span class="selo selo-lin">Debian</span></h2>
+  <p>Para acessar o Debian, reinicie a máquina e clique em qualquer tecla até aparecer a lista de sistemas operacionais disponíveis. Selecione o Debian com as setas do teclado e clique ENTER.</p>
+  <p>Você vai usar o <strong>Terminal</strong> do Debian — a linha de comando do sistema. Para abri-lo, use o atalho <code>Ctrl + Alt + T</code>, ou clique em <strong>Atividades</strong> (canto superior esquerdo) e digite "Terminal".</p>
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    O Debian também tem uma GUI equivalente ao Explorador de Arquivos do Windows: o aplicativo <strong>Arquivos</strong>, que você pode abrir pelo menu Atividades. Sinta-se livre para conferir visualmente, pelo aplicativo Arquivos, as pastas e arquivos que forem criados pelo Terminal ao longo desta trilha.
+  </div>
+
+  <h3 id="lin-terminal">1. Navegando pelo terminal</h3>
+  <div class="passo">
+    <div class="num">1</div>
+    <div class="conteudo">
+      <p>Abra o <strong>Terminal</strong>. Antes de digitar, veja o que cada comando faz:</p>
+      <div class="caixa comando">
+        <strong class="rotulo">O que cada comando faz</strong>
+        <ul style="margin:6px 0 0 0;">
+          <li><code>pwd</code> — "print working directory": mostra o caminho absoluto do diretório em que você está agora.</li>
+          <li><code>mkdir &lt;nome&gt;</code> — "make directory": cria uma nova pasta com o nome indicado.</li>
+          <li><code>cd &lt;pasta&gt;</code> — "change directory": muda o diretório de trabalho atual para a pasta indicada.</li>
+        </ul>
+      </div>
+      <p>Digite <code>pwd</code> e pressione Enter para ver seu diretório de trabalho atual (algo como <code>/home/seuusuario</code>).</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">2</div>
+    <div class="conteudo">
+      <p>Crie sua pasta de trabalho dentro do seu diretório pessoal:</p>
+      <pre><code>cd ~
+mkdir lab_seunome
+cd lab_seunome</code></pre>
+      <p>O símbolo <code>~</code> é um atalho do Debian que sempre representa o seu diretório pessoal (<code>/home/seuusuario</code>).</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">3</div>
+    <div class="conteudo">
+      <p>O comando <code>echo</code> escreve um texto na tela; usando <code>&gt;</code> depois dele, esse texto é enviado para dentro de um arquivo (criando-o, se ainda não existir). Crie um arquivo de texto e escreva algo dentro dele:</p>
+      <pre><code>echo "Meu primeiro arquivo de laboratorio" > ci067.txt</code></pre>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">4</div>
+    <div class="conteudo">
+      <p>O comando <code>ls</code> lista o conteúdo de uma pasta; com a opção <code>-l</code> ("long"), ele mostra detalhes de cada arquivo. Liste o conteúdo da sua pasta com detalhes:</p>
+      <pre><code>ls -l</code></pre>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 1</strong>
+    Na saída de <code>ls -l</code>, identifique: o <strong>tamanho</strong> do arquivo (em bytes), a <strong>data de modificação</strong> e as <strong>permissões</strong> (a sequência de letras como <code>rw-r--r--</code>). Copie essa linha para o seu relatório.
+  </div>
+
+  <h3 id="lin-atributos">2. Atributos com <code>ls -l</code> e <code>file</code></h3>
+  <div class="passo">
+    <div class="num">5</div>
+    <div class="conteudo">
+      <p>O comando <code>file</code> analisa os bytes iniciais de um arquivo (o "magic number") e informa qual é o tipo real do conteúdo, independente do nome. Use-o no seu arquivo:</p>
+      <pre><code>file ci067.txt</code></pre>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">6</div>
+    <div class="conteudo">
+      <p>O comando <code>mv</code> ("move") também é usado para renomear arquivos no Linux (mover para o mesmo lugar, com nome novo). Troque a "extensão" do arquivo (no Linux, a extensão é só parte do nome, sem efeito especial no sistema) e rode o <code>file</code> de novo:</p>
+      <pre><code>mv ci067.txt ci067.pdf
+file ci067.pdf</code></pre>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 2</strong>
+    Mesmo com a extensão <code>.pdf</code>, o comando <code>file</code> reconheceu o conteúdo real como quê? O que isso mostra sobre o Linux não depender da extensão para identificar o tipo do arquivo? Renomeie de volta para <code>ci067.txt</code> usando <code>mv</code>.
+  </div>
+
+  <h3 id="lin-caminhos">3. Caminhos absolutos e relativos</h3>
+  <p>Reveja a explicação sobre <a href="#conc-caminho">caminhos absolutos e relativos</a> antes de continuar. Você vai testar os dois tipos usando <code>cd</code> e <code>pwd</code>.</p>
+  <div class="passo">
+    <div class="num">7</div>
+    <div class="conteudo">
+      <p>Crie duas subpastas e mova o arquivo:</p>
+      <pre><code>mkdir documentos avaliacoes
+mv ci067.txt documentos/</code></pre>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">8</div>
+    <div class="conteudo">
+      <p>Entre na pasta <code>documentos</code> e veja o caminho absoluto:</p>
+      <pre><code>cd documentos
+pwd</code></pre>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">9</div>
+    <div class="conteudo">
+      <p>Agora teste caminhos relativos, usando <code>.</code> (diretório atual) e <code>..</code> (diretório pai — "sobe um nível"):</p>
+      <pre><code>cd ..
+cd ./avaliacoes
+cd ../documentos</code></pre>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 3</strong>
+    Escreva o <strong>caminho absoluto</strong> completo do arquivo <code>ci067.txt</code> (algo como <code>/home/seuusuario/lab_seunome/documentos/ci067.txt</code>). Explique o que <code>.</code> e <code>..</code> significam, com base no que você testou.
+  </div>
+
+  <h3 id="lin-montagem">4. Volumes e pontos de montagem</h3>
+  <div class="passo">
+    <div class="num">10</div>
+    <div class="conteudo">
+      <p>O comando <code>df</code> ("disk free") mostra os volumes montados e o espaço disponível em cada um; a opção <code>-h</code> ("human-readable") exibe os tamanhos em KB/MB/GB, mais fáceis de ler. Execute:</p>
+      <pre><code>df -h</code></pre>
+      <p>Perceba que o diretório apresentado não é apresentado de uma forma amigável. Vamos verificar via GUI, abrindo o aplicativo Arquivos e observando as pastas.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">11</div>
+    <div class="conteudo">
+      <p>Se houver um pendrive disponível no laboratório, conecte-o. No Debian, ele costuma ser montado automaticamente dentro de <code>/media/seuusuario/</code>.</p>
+    </div>
+  </div>
+
+  <div class="caixa checkpoint">
+    <strong class="rotulo">Checkpoint 4</strong>
+    Qual foi o <strong>ponto de montagem</strong> (caminho dentro de <code>/media/...</code>) em que o pendrive apareceu? Compare com a forma como o Windows lida com pendrives (letra de unidade) — qual é a diferença conceitual entre as duas abordagens?
+  </div>
+  </div>
+  <!-- fim trilha linux -->
+
+  <h2 id="relatorio">Relatório final (todos os alunos)</h2>
+  <p>Depois de concluir a sua trilha, responda às perguntas abaixo. Se possível, converse com um colega que fez a outra trilha (Windows ↔ Linux) para comparar as respostas.</p>
+  <div class="relatorio">
+  <ol>
+    <li>Cite três atributos de arquivo que você observou na prática (em Propriedades no Windows ou em <code>ls -l</code> no Debian).</li>
+    <li>O que aconteceu quando você trocou a extensão do arquivo de texto para <code>.pdf</code>? O sistema operacional passou a tratar o conteúdo como um PDF de verdade? Justifique.</li>
+    <li>Escreva o caminho absoluto de um dos arquivos que você criou, e um caminho relativo equivalente partindo de uma pasta vizinha.</li>
+    <li>Como o sistema que você usou (Windows ou Debian) identifica um volume de armazenamento (pendrive, disco)? Compare com a explicação da aula teórica.</li>
+    <li>Qual a diferença entre uma interface gráfica (GUI) e uma linha de comando (CLI)? Cite o nome do programa de linha de comando do sistema que você usou.</li>
+    <li>Na sua opinião, qual conceito ficou mais claro depois da prática em comparação com a aula teórica? Por quê?</li>
+  </ol>
+  </div>
+
+  <footer id="creditos">
+    <h2 style="border:none; margin-top:20px;">Créditos</h2>
+    <p>Roteiro prático elaborado como continuação da aula teórica <em>"Arquivos, Sistemas de Arquivos e Diretórios"</em>, com base nos Capítulos 22, 24 e 25 do livro <strong>Sistemas Operacionais: Conceitos e Mecanismos</strong>, de Carlos Maziero (UFPR).</p>
+    <p>Instituto Federal de Minas Gerais - Campus Salinas — Curso Técnico em Informática — Disciplina: Softwares, Aplicativos e Sistemas Operacionais.</p>
+  </footer>
+</main>
+</div>
+</body>
+</html>
