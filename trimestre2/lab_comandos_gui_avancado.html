@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório: Comandos Avançados e Configurações da GUI (Windows)</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:260px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-280px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0;}
+  nav.sumario ol{padding-left:18px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:860px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa.verificacao{border-left-color:#0e7c86; background:#eaf6f7;}
+  .caixa.entrega{border-left-color:#b5651d; background:#fdf3ea;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  .tarefa{
+    border:1px solid var(--borda); border-radius:8px; padding:18px 22px;
+    margin:26px 0; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .tarefa h4{
+    margin:0 0 10px 0; color:#fff; background:var(--azul);
+    display:inline-block; padding:4px 14px; border-radius:14px; font-size:0.92em;
+  }
+  .tarefa .objetivo{font-style:italic; color:#5a6a75; margin-bottom:12px;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    color: var(--texto);
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  pre{
+    font-family: Consolas, "Courier New", monospace; background:#1b2630; color:#e8eef2;
+    padding:12px 16px; border-radius:6px; overflow-x:auto; font-size:0.88em; margin:14px 0;
+  }
+  ul, ol{margin:10px 0; padding-left:24px;}
+  .exercicios ol > li{margin-bottom:10px;}
+  .badge{
+    display:inline-block; font-size:0.75em; font-weight:600; text-transform:uppercase;
+    letter-spacing:.04em; padding:2px 9px; border-radius:10px; margin-left:8px;
+  }
+  .badge.cmd{background:#dcecf7; color:var(--azul);}
+  .badge.gui{background:#e6f2ea; color:#2e8b57;}
+  .badge.compara{background:#f3e9f9; color:#7a5ea8;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#7a8a94;}
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+  }
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle">☰</label>
+  <span class="titulo-topo">Sistemas Operacionais — Laboratório</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#instrucoes">Instruções</a></li>
+    <li><a href="#preparacao">Preparação do ambiente</a></li>
+    <li><a href="#parte1">Parte 1 — Linha de comando avançada</a></li>
+    <li><a href="#parte2">Parte 2 — Configurações da GUI</a></li>
+  </ol>
+</nav>
+<main>
+  <h1>Laboratório: Comandos Avançados e Configurações da GUI</h1>
+  <p class="subtitulo">Aprofundando o Prompt de Comando e o Explorador de Arquivos do Windows</p>
+
+  <h2 id="instrucoes">Instruções</h2>
+  <p>Para realizar esta atividade, você deve:</p>
+  <ul>
+    <li>Ler cada tarefa por completo antes de executar. Várias tarefas pedem que você primeiro faça uma previsão do resultado e só depois confira executando o comando ou a ação na interface;</li>
+    <li>Executar os passos de cada tarefa na ordem em que aparecem, dentro da pasta indicada;</li>
+    <li>Observar com atenção o resultado de cada passo antes de seguir para o próximo;</li>
+    <li>Responder, <strong>no caderno</strong>, todas as caixas de <strong>"Pergunta de verificação"</strong> ao final de cada tarefa — elas não são opcionais e serão usadas para verificar o que você entendeu, não apenas o que você executou.</li>
+  </ul>
+
+  <h2 id="preparacao">Preparação do ambiente</h2>
+  <p>Para que os comandos de exclusão e movimentação não afetem arquivos importantes, todo o laboratório será feito dentro de uma pasta de trabalho isolada.</p>
+  <div class="tarefa">
+    <h4>Tarefa 0</h4>
+    <p class="objetivo">Objetivo: criar uma área de trabalho segura para o laboratório.</p>
+    <ol>
+      <li>Abra o <strong>Prompt de Comando</strong> (pesquise "cmd" no menu Iniciar).</li>
+      <li>Navegue até a sua pasta de Documentos com <code>cd %USERPROFILE%\Documents</code>.</li>
+      <li>Crie a pasta do laboratório: <code>mkdir LabAvancado</code>.</li>
+      <li>Entre nela: <code>cd LabAvancado</code>.</li>
+      <li>Dentro dela, crie a seguinte estrutura, usando um comando <code>mkdir</code> para cada pasta: <code>Relatorios</code>, <code>Relatorios\2025</code>, <code>Relatorios\2026</code>, <code>Backup</code>, <code>Temp</code>.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Verificação</strong>
+      Use o comando <code>dir /s</code> dentro de <code>LabAvancado</code> e confirme que as cinco pastas aparecem na listagem, com a indentação correta indicando a hierarquia.
+    </div>
+  </div>
+
+  <h2 id="parte1">Parte 1 — Linha de comando avançada</h2>
+  <p>Todas as tarefas desta parte devem ser executadas dentro da pasta <code>LabAvancado</code> criada na preparação.</p>
+
+  <div class="tarefa">
+    <h4>Tarefa 1 — <code>dir</code> com parâmetros</h4>
+    <p class="objetivo">Objetivo: enxergar informações que a listagem simples não mostra.</p>
+    <div class="caixa definicao">
+      <strong class="rotulo">O que é um arquivo oculto?</strong>
+      <p style="margin-top:0;">Um arquivo ou pasta oculto é aquele que recebeu o atributo especial <strong>Hidden (H)</strong>, reconhecido pelo sistema de arquivos. Esse atributo não protege nem criptografa o conteúdo — o arquivo continua existindo normalmente e pode ser lido, editado ou apagado por quem souber o nome exato. O que muda é que ferramentas como o comando <code>dir</code> e o Explorador de Arquivos deixam de exibi-lo por padrão.</p>
+      <p>Esse recurso é usado, por exemplo, para: evitar que o usuário comum apague por engano arquivos de configuração usados pelo sistema operacional ou por programas (como pastas de cache e preferências); manter arquivos auxiliares fora da visão do usuário em pastas pessoais (o Windows cria, por exemplo, um arquivo <code>desktop.ini</code> oculto em muitas pastas); e reduzir a chance de alguém mexer sem querer em estruturas internas do sistema, como a pasta oculta <code>System Volume Information</code>.</p>
+      <p style="margin-bottom:0;">Por isso é importante não confundir "oculto" com "seguro": ocultar apenas tira o item da exibição padrão, não impede o acesso a ele.</p>
+    </div>
+    <p><strong>Parâmetros do <code>dir</code> usados nesta tarefa:</strong></p>
+    <table>
+      <tr><th>Parâmetro</th><th>O que faz</th></tr>
+      <tr><td><code>/a</code></td><td>Exibe todos os arquivos e pastas, inclusive os marcados com atributo oculto (H) ou de sistema (S), que o <code>dir</code> sem parâmetros esconde por padrão.</td></tr>
+      <tr><td><code>/s</code></td><td>Além do conteúdo da pasta atual, lista também o conteúdo de todas as subpastas, percorrendo a árvore de diretórios de forma recursiva.</td></tr>
+      <tr><td><code>/o:n</code></td><td>Ordena a listagem por nome, em ordem alfabética crescente (a letra depois de <code>/o:</code> define o critério de ordenação: <code>n</code> = nome).</td></tr>
+      <tr><td><code>/o:-d</code></td><td>Ordena a listagem por data de modificação (<code>d</code> = data); o sinal <code>-</code> antes da letra inverte a ordem, do arquivo mais recente para o mais antigo.</td></tr>
+    </table>
+    <ol>
+      <li>Garanta que está dentro de <code>LabAvancado</code> (use <code>cd</code> sozinho, sem parâmetros, para conferir o caminho atual exibido).</li>
+      <li>Entre na pasta <code>Temp</code>. 
+      <li>Crie um arquivo de teste: <code>echo teste &gt; oculto.txt</code> </li>
+      <li>Torne-o oculto executando o comando: <code>attrib +h oculto.txt</code>.</li>
+      <li>Confirme que o atributo foi realmente aplicado antes de continuar: execute <code>attrib oculto.txt</code> e verifique se aparece a letra <code>H</code> antes do nome do arquivo. Se não aparecer, refaça o passo anterior — sem essa confirmação, os próximos passos não vão mostrar diferença nenhuma.</li>
+      <li>Ainda dentro de <code>Temp</code>, execute <code>dir</code> e observe se <code>oculto.txt</code> aparece na listagem.</li>
+      <li>Agora, na mesma pasta, execute <code>dir /a</code> e compare com o passo anterior.</li>
+      <li>Volte para <code>LabAvancado</code> com <code>cd ..</code> e execute <code>dir /s</code>. Observe o que muda em relação ao <code>dir</code> simples executado direto em <code>LabAvancado</code>.</li>
+      <li>Entre em <code>Relatorios</code> e execute <code>dir /o:n</code> e depois <code>dir /o:-d</code> (ela deve ter as subpastas 2025 e 2026 dentro). Anote a diferença na ordem de exibição.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Se você executou <code>dir</code> e <code>dir /a</code> dentro de <code>Temp</code> e ainda assim os resultados vieram iguais, o que isso indica: que o parâmetro <code>/a</code> não funciona, ou que o arquivo não estava de fato marcado como oculto? Como o comando <code>attrib oculto.txt</code> (passo 5) ajuda a diferenciar essas duas possibilidades? O que o parâmetro <code>/a</code> muda no comportamento do comando <code>dir</code>? E o que significam, na prática, os parâmetros <code>/s</code> e <code>/o</code>?
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 2 — <code>mkdir</code>, <code>rmdir</code> e remoção recursiva</h4>
+    <p class="objetivo">Objetivo: entender a diferença entre remover uma pasta vazia e uma pasta com conteúdo.</p>
+    <p><strong>Parâmetros do <code>rmdir</code> usados nesta tarefa:</strong></p>
+    <table>
+      <tr><th>Parâmetro</th><th>O que faz</th></tr>
+      <tr><td><em>(nenhum)</em></td><td>Remove a pasta indicada somente se ela estiver <strong>vazia</strong>. Se houver qualquer arquivo ou subpasta dentro, o comando recusa a exclusão e exibe uma mensagem de erro — é uma proteção contra apagar conteúdo por engano.</td></tr>
+      <tr><td><code>/s</code></td><td>Remove a pasta indicada <strong>e todo o seu conteúdo</strong> (arquivos e subpastas, recursivamente). Antes de excluir, o CMD pede confirmação com a pergunta <code>Deseja remover o diretório "..."? (S/N)</code>.</td></tr>
+      <tr><td><code>/q</code></td><td>Ativa o "modo silencioso" (quiet): quando usado junto com <code>/s</code>, suprime a pergunta de confirmação e apaga direto. Sozinho, sem <code>/s</code>, não tem efeito, pois uma pasta vazia já não pede confirmação.</td></tr>
+    </table>
+    <ol>
+      <li>Dentro de <code>Temp</code>, crie uma subpasta chamada <code>Rascunho</code> e, dentro dela, um arquivo de texto qualquer (pode usar <code>echo algo &gt; Rascunho\arquivo.txt</code>).</li>
+      <li>Tente remover a pasta <code>Rascunho</code> com <code>rmdir Rascunho</code> (sem parâmetros). Anote a mensagem de erro exibida.</li>
+      <li>Agora execute <code>rmdir /s Rascunho</code> e observe o que o sistema pergunta antes de excluir.</li>
+      <li>Repita o processo (crie a mesma estrutura de novo) e desta vez use <code>rmdir /s /q Rascunho</code>.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Por que o <code>rmdir</code> simples recusou remover a pasta? O que os parâmetros <code>/s</code> e <code>/q</code> fazem cada um? Em que situação real usar <code>/q</code> pode ser perigoso?
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 3 — Curingas com <code>copy</code>, <code>xcopy</code>, <code>move</code>, <code>del</code> e <code>ren</code></h4>
+    <p class="objetivo">Objetivo: operar sobre vários arquivos de uma só vez sem repetir o comando.</p>
+    <div class="caixa definicao">
+      <strong class="rotulo">O que é um curinga (wildcard)?</strong>
+      <p style="margin-top:0;">Um <strong>curinga</strong> é um caractere especial que substitui, na hora de digitar um comando, um trecho variável de um nome de arquivo — permitindo aplicar um único comando a vários arquivos de uma vez, sem repeti-lo para cada um. No Prompt de Comando, os dois curingas principais são:</p>
+      <ul>
+        <li><code>*</code> — substitui <strong>qualquer sequência de caracteres</strong> (inclusive nenhum caractere). Ex.: <code>*.txt</code> significa "qualquer nome, desde que termine em .txt".</li>
+        <li><code>?</code> — substitui exatamente <strong>um caractere</strong> naquela posição. Ex.: <code>relatorio?.txt</code> combina com <code>relatorio1.txt</code> e <code>relatorioA.txt</code>, mas não com <code>relatorio10.txt</code> (dois caracteres a mais) nem com <code>relatorio.txt</code> (nenhum caractere ali).</li>
+      </ul>
+      <p style="margin-bottom:0;">Nesta tarefa, o curinga <code>*.txt</code> é usado para copiar e depois renomear <em>todos</em> os arquivos com extensão <code>.txt</code> de uma pasta em um único comando — é o que você vai fazer nos passos 2 e 3 abaixo.</p>
+    </div>
+    <p><strong>Comandos usados nesta tarefa:</strong></p>
+    <table>
+      <tr><th>Comando</th><th>O que faz</th></tr>
+      <tr><td><code>copy origem destino</code></td><td>Copia um ou mais arquivos de um local para outro, mantendo o arquivo original intacto. Aceita curingas para copiar vários arquivos de uma vez, mas não copia pastas inteiras.</td></tr>
+      <tr><td><code>xcopy origem destino /parâmetro</code></td><td>Versão mais completa do <code>copy</code>: além de arquivos, também copia pastas inteiras com o conteúdo de dentro. Sozinho, sem parâmetro, ignora subpastas — é preciso indicar explicitamente que elas também devem ser copiadas.</td></tr>
+      <tr><td><code>ren nome_atual novo_nome</code></td><td>Renomeia um arquivo ou pasta. Aceita curingas nos dois lados: por exemplo, <code>ren *.txt *.bak</code> troca a extensão de todos os arquivos .txt para .bak de uma vez, mantendo o nome original de cada um.</td></tr>
+      <tr><td><code>del nome_do_arquivo</code></td><td>Exclui um ou mais arquivos (não remove pastas — para isso existe o <code>rmdir</code>, visto na Tarefa 2). Também aceita curingas, por isso deve ser usado com atenção redobrada: um curinga digitado errado pode apagar mais arquivos do que o pretendido.</td></tr>
+    </table>
+    <ol>
+      <li>Dentro de <code>Relatorios\2025</code>, crie três arquivos: <code>jan.txt</code>, <code>fev.txt</code>, <code>mar.txt</code> e mais um arquivo <code>resumo.log</code> (use <code>echo</code> redirecionado para cada um, como na tarefa anterior).</li>
+      <li>Copie apenas os arquivos <code>.txt</code> para a pasta <code>Backup</code> usando um único comando <code>copy</code> com curinga.</li>
+      <li>Na pasta <code>Backup</code>, renomeie todos os arquivos <code>.txt</code> para a extensão <code>.bak</code> com um único comando <code>ren</code> usando curinga.</li>
+      <li>Volte a <code>Relatorios\2025</code> e copie toda a subpasta (incluindo o próprio conteúdo) para dentro de <code>Relatorios\2026</code> usando <code>xcopy</code> com o parâmetro que copia subpastas.</li>
+      <li>Por fim, exclua apenas o arquivo <code>resumo.log</code> de dentro de <code>Relatorios\2025</code> usando <code>del</code> com o nome exato (sem curinga desta vez).</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      O que o caractere <code>*</code> representa em <code>*.txt</code>? Ele funcionaria se você digitasse <code>copy *.* Backup</code>? O que aconteceria de diferente? Por que <code>xcopy</code> foi necessário no passo 4 em vez de <code>copy</code>?
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 4 — Caminhos relativos vs. absolutos (sem copiar exemplo pronto)</h4>
+    <p class="objetivo">Objetivo: calcular caminhos em vez de decorá-los.</p>
+    <p>Considere que seu prompt está atualmente dentro de <code>LabAvancado\Relatorios\2026</code> (confirme com o comando que mostra o diretório atual antes de prosseguir).</p>
+    <ol>
+      <li><strong>Sem digitar o caminho completo</strong>, calcule (no papel ou em um arquivo de respostas) o caminho <strong>relativo</strong> que leva até a pasta <code>Relatorios\2025</code> — uma pasta "irmã" da atual —, usando <code>..</code> quando necessário.</li>
+      <li>Use esse caminho relativo para <strong>entrar de fato</strong> na pasta, com <code>cd &lt;seu_caminho_relativo&gt;</code>. Confirme que chegou ao lugar certo executando <code>cd</code> sozinho, sem parâmetros (ele mostra o diretório atual).</li>
+      <li>Agora, sem sair de <code>Relatorios\2025</code>, calcule o caminho <strong>relativo</strong> (usando <code>..</code>, possivelmente mais de uma vez) que leva até a pasta <code>Backup</code>.</li>
+      <li><strong>Sem entrar em <code>Backup</code></strong>, use o comando <code>dir</code> com esse caminho relativo para consultar o conteúdo dela de fora: <code>dir &lt;seu_caminho_relativo&gt;</code>. Confirme, com <code>cd</code> sozinho, que você continua em <code>Relatorios\2025</code> — o <code>dir</code> apenas consultou outra pasta, sem te levar até ela.</li>
+      <li>Agora escreva o caminho <strong>absoluto</strong> completo até a mesma pasta <code>Backup</code>, começando pela letra da unidade (ex.: <code>C:\...</code>).</li>
+      <li>Confirme executando <code>dir</code> com o caminho absoluto (também sem entrar na pasta) e compare: o resultado deve ser idêntico ao do passo anterior, já que os dois caminhos — relativo e absoluto — apontam para o mesmo lugar.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Quantos níveis você precisou "subir" com <code>..</code> em cada caso — para entrar em <code>Relatorios\2025</code> e para consultar <code>Backup</code>? Qual é a diferença entre usar <code>cd</code> e usar <code>dir</code> com um caminho: por que o primeiro muda o diretório atual e o segundo não?     </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 5 — Redirecionamento e encadeamento</h4>
+    <p class="objetivo">Objetivo: gerar e consultar listagens sem depender apenas da tela.</p>
+    <div class="caixa definicao">
+      <strong class="rotulo">O que são esses símbolos?</strong>
+      <p style="margin-top:0;">Por padrão, o resultado de um comando é exibido na tela (o que se chama de <strong>saída padrão</strong>). Os símbolos <code>&gt;</code>, <code>&gt;&gt;</code> e <code>|</code> permitem desviar essa saída para outro lugar, em vez de apenas exibi-la.</p>
+    </div>
+    <p><strong>Símbolos usados nesta tarefa:</strong></p>
+    <table>
+      <tr><th>Símbolo</th><th>Nome</th><th>O que faz</th></tr>
+      <tr><td><code>&gt;</code></td><td>Redirecionamento (sobrescrever)</td><td>Envia a saída do comando para dentro de um arquivo, em vez de mostrá-la na tela. Se o arquivo já existir, seu conteúdo anterior é <strong>apagado</strong> e substituído pelo novo.</td></tr>
+      <tr><td><code>&gt;&gt;</code></td><td>Redirecionamento (acrescentar)</td><td>Também envia a saída do comando para um arquivo, mas <strong>acrescenta</strong> ao final do conteúdo já existente, em vez de apagá-lo. Se o arquivo não existir ainda, ele é criado normalmente.</td></tr>
+      <tr><td><code>|</code></td><td>Pipe (encadeamento)</td><td>Pega a saída do comando à esquerda e a entrega como entrada para o comando à direita, encadeando os dois. Não cria nem altera nenhum arquivo — o resultado final ainda aparece na tela, já filtrado pelo segundo comando.</td></tr>
+    </table>
+    <ol>
+      <li>Dentro de <code>LabAvancado</code>, gere um arquivo de inventário com <code>dir /s &gt; inventario.txt</code>.</li>
+      <li>Abra o arquivo <code>inventario.txt</code> executando o comando <code>notepad inventario.txt</code> e confira o conteúdo.</li>
+      <li>Adicione uma nova informação ao final do mesmo arquivo, sem apagar o que já existe, usando <code>echo Gerado em: %DATE% %TIME% &gt;&gt; inventario.txt</code>.</li>
+      <li>Use o comando <code>dir | find "txt"</code> para listar, na tela, apenas as linhas que contêm "txt" na saída do <code>dir</code>.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Qual é a diferença de comportamento entre <code>&gt;</code> e <code>&gt;&gt;</code>? O que o símbolo <code>|</code> (pipe) faz com a saída do comando à sua esquerda?
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 6 — Atributos e permissões via comando</h4>
+    <p class="objetivo">Objetivo: consultar e alterar atributos e permissões sem usar o mouse.</p>
+    <ol>
+      <li>No CMD, dentro de <code>Backup</code>, execute <code>attrib</code> (sem parâmetros) e observe os atributos listados para cada arquivo.</li>
+      <li>Escolha um arquivo <code>.bak</code> e torne-o somente leitura: <code>attrib +r nome_do_arquivo.bak</code>.</li>
+      <li>Tente excluir esse arquivo com <code>del</code>. Anote o que acontece.</li>
+      <li>Remova o atributo com <code>attrib -r nome_do_arquivo.bak</code> e tente excluir novamente.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      O atributo "somente leitura" impede a exclusão do arquivo, a edição, ou os dois?
+    </div>
+  </div>
+
+  <h2 id="parte2">Parte 2 — Configurações avançadas da GUI <span class="badge gui">Explorador de Arquivos</span></h2>
+
+  <div class="tarefa">
+    <h4>Tarefa 7 — Ocultos e extensões</h4>
+    <p class="objetivo">Objetivo: revelar informações que o Explorador esconde por padrão.</p>
+    <ol>
+      <li>Abra o Explorador de Arquivos e navegue até <code>LabAvancado\Temp</code>.</li>
+      <li>Sem alterar nenhuma opção ainda, veja se o arquivo <code>oculto.txt</code> (criado na Tarefa 1) aparece.</li>
+      <li>Vá em <strong>Exibir → Mostrar → Itens ocultos</strong> (ou "Opções" → aba "Modo de Exibição" → "Arquivos e pastas ocultos" nas versões mais antigas) e ative a opção.</li>
+      <li>Confirme que <code>oculto.txt</code> agora aparece, exibido de forma esmaecida.</li>
+      <li>Em seguida, ative também a opção <strong>Extensões de nomes de arquivos</strong> e observe como os nomes dos arquivos na pasta <code>Backup</code> mudam de exibição.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Por que o Windows esconde arquivos ocultos e extensões por padrão? Descreva um cenário em que essa configuração padrão poderia ser usada de forma maliciosa (por exemplo, um arquivo chamado <code>foto.jpg.exe</code>).
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 8 — Propriedades avançadas, atributos e segurança</h4>
+    <p class="objetivo">Objetivo: encontrar pela interface o que foi feito por comando na Tarefa 6.</p>
+    <ol>
+      <li>Clique com o botão direito no arquivo que você tornou somente leitura (Tarefa 6) e escolha <strong>Propriedades</strong>.</li>
+      <li>Localize a caixa de seleção <strong>Somente leitura</strong> na aba Geral e confirme se ela reflete o que foi feito pelo comando <code>attrib</code>.</li>
+      <li>Vá até a aba <strong>Segurança</strong> e identifique seu usuário na lista de permissões.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      As informações de permissões do Explorador correspondem ao que foi definido por linha de comando? 
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 9 — Compactação (zip) pela interface</h4>
+    <p class="objetivo">Objetivo: compactar e extrair arquivos sem usar comandos.</p>
+    <ol>
+      <li>Selecione toda a pasta <code>Relatorios</code> no Explorador.</li>
+      <li>Clique com o botão direito e escolha <strong>Enviar para → Pasta compactada (zipada)</strong>.</li>
+      <li>Observe o tamanho do arquivo <code>.zip</code> gerado comparado ao tamanho original da pasta (veja em Propriedades de cada um).</li>
+      <li>Copie o <code>.zip</code> para dentro de <code>Temp</code>, clique com o botão direito nele e escolha <strong>Extrair tudo</strong>, extraindo em uma nova subpasta.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      O tamanho do arquivo compactado ficou menor, igual ou maior que a soma dos arquivos originais? Em que tipo de arquivo (texto, imagem já compactada, vídeo) a compactação costuma render mais espaço economizado?
+    </div>
+  </div>
+
+  <!-- <div class="tarefa">
+    <h4>Tarefa 10 — Pesquisa com filtros</h4>
+    <p class="objetivo">Objetivo: usar a busca do Explorador de forma direcionada, não apenas digitando um nome.</p>
+    <ol>
+      <li>Na pasta <code>LabAvancado</code>, clique na barra de pesquisa do Explorador.</li>
+      <li>Use o filtro de tipo digitando <code>tipo:pasta compactada</code> (ou selecione o filtro equivalente que aparece sugerido) para localizar apenas o arquivo <code>.zip</code> criado.</li>
+      <li>Limpe a pesquisa e agora filtre por data de modificação, escolhendo "Hoje" (ou o filtro de data equivalente), para ver todos os itens criados durante este laboratório.</li>
+      <li>Por fim, pesquise por tamanho, filtrando por arquivos "pequenos" ou "vazios", e observe quais aparecem.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Como os filtros de pesquisa do Explorador (tipo, data, tamanho) se relacionam com os parâmetros que você usou no comando <code>dir</code> na Tarefa 1? Eles resolvem o mesmo tipo de problema?
+    </div>
+  </div> -->
+
+  <div class="tarefa">
+    <h4>Tarefa 10 — Atalho x cópia real</h4>
+    <p class="objetivo">Objetivo: não confundir um atalho com o arquivo de fato.</p>
+    <ol>
+      <li>Clique com o botão direito em um dos arquivos <code>.bak</code> da pasta <code>Backup</code> e escolha <strong>Criar atalho</strong>.</li>
+      <li>Mova o atalho criado para a pasta <code>Temp</code>.</li>
+      <li>Compare o ícone e o tamanho (em Propriedades) do atalho com o do arquivo original.</li>
+      <li>Renomeie o arquivo original na pasta <code>Backup</code> (não o atalho) e tente abrir o atalho a partir de <code>Temp</code>. Anote o que acontece.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      O que aconteceu ao abrir o atalho depois de renomear o arquivo original? Isso mostra que um atalho contém o arquivo ou apenas uma referência a ele? O que aconteceria de diferente se, em vez de um atalho, você tivesse feito uma cópia (<code>copy</code>) do arquivo?
+    </div>
+  </div>
+
+  <div class="tarefa">
+    <h4>Tarefa 11 — Propriedades do disco</h4>
+    <p class="objetivo">Objetivo: localizar informações do volume pela interface gráfica.</p>
+    <ol>
+      <li>No Explorador, clique em <strong>Este Computador</strong> e clique com o botão direito na unidade principal (geralmente <code>C:</code>).</li>
+      <li>Escolha <strong>Propriedades</strong> e anote: sistema de arquivos, espaço usado e espaço livre.</li>
+      <li>Clique na aba <strong>Segurança</strong> e veja quais as permissões do seu usuário.</li>
+    </ol>
+    <div class="caixa verificacao">
+      <strong class="rotulo">Pergunta de verificação</strong>
+      Qual sistema de arquivos aparece na unidade <code>C:</code>? Quais as permissões do seu usuário?
+    </div>
+  </div>
+
+
+</main>
+</div>
+</body>
+</html>
