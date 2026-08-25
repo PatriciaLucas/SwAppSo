@@ -145,18 +145,18 @@
     <ol>
       <li>Abra o <strong>Prompt de Comando</strong> (pesquise "cmd" no menu Iniciar).</li>
       <li>Navegue até a sua pasta de Documentos com <code>cd Documents</code>.</li>
-      <li>Crie a pasta do laboratório: <code>mkdir LabAvancado</code>.</li>
-      <li>Entre nela: <code>cd LabAvancado</code>.</li>
+      <li>Crie a pasta do laboratório: <code>mkdir Labavancado_SeuNome</code>.</li>
+      <li>Entre nela: <code>cd Labavancado_SeuNome</code>.</li>
       <li>Dentro dela, crie a seguinte estrutura, usando um comando <code>mkdir</code> para cada pasta: <code>Relatorios</code>, <code>Relatorios\2025</code>, <code>Relatorios\2026</code>, <code>Backup</code>, <code>Temp</code>.</li>
     </ol>
     <div class="caixa verificacao">
       <strong class="rotulo">Verificação</strong>
-      Use o comando <code>dir /s</code> dentro de <code>LabAvancado</code> e confirme que as cinco pastas aparecem na listagem, com a indentação correta indicando a hierarquia.
+      Use o comando <code>dir /s</code> dentro de <code>Labavancado_SeuNome</code> e confirme que as cinco pastas aparecem na listagem, com a indentação correta indicando a hierarquia.
     </div>
   </div>
 
   <h2 id="parte1">Parte 1 — Linha de comando avançada</h2>
-  <p>Todas as tarefas desta parte devem ser executadas dentro da pasta <code>LabAvancado</code> criada na preparação.</p>
+  <p>Todas as tarefas desta parte devem ser executadas dentro da pasta <code>Labavancado_SeuNome</code> criada na preparação.</p>
 
   <div class="tarefa">
     <h4>Tarefa 1 — <code>dir</code> com parâmetros</h4>
@@ -176,14 +176,14 @@
       <tr><td><code>/o:-d</code></td><td>Ordena a listagem por data de modificação (<code>d</code> = data); o sinal <code>-</code> antes da letra inverte a ordem, do arquivo mais recente para o mais antigo.</td></tr>
     </table>
     <ol>
-      <li>Garanta que está dentro de <code>LabAvancado</code> (use <code>cd</code> sozinho, sem parâmetros, para conferir o caminho atual exibido).</li>
+      <li>Garanta que está dentro de <code>Labavancado_SeuNome</code> (use <code>cd</code> sozinho, sem parâmetros, para conferir o caminho atual exibido).</li>
       <li>Entre na pasta <code>Temp</code>. 
       <li>Crie um arquivo de teste: <code>echo teste &gt; oculto.txt</code> </li>
       <li>Torne-o oculto executando o comando: <code>attrib +h oculto.txt</code>.</li>
       <li>Confirme que o atributo foi realmente aplicado antes de continuar: execute <code>attrib oculto.txt</code> e verifique se aparece a letra <code>H</code> antes do nome do arquivo. Se não aparecer, refaça o passo anterior — sem essa confirmação, os próximos passos não vão mostrar diferença nenhuma.</li>
       <li>Ainda dentro de <code>Temp</code>, execute <code>dir</code> e observe se <code>oculto.txt</code> aparece na listagem.</li>
       <li>Agora, na mesma pasta, execute <code>dir /a</code> e compare com o passo anterior.</li>
-      <li>Volte para <code>LabAvancado</code> com <code>cd ..</code> e execute <code>dir /s</code>. Observe o que muda em relação ao <code>dir</code> simples executado direto em <code>LabAvancado</code>.</li>
+      <li>Volte para <code>Labavancado_SeuNome</code> com <code>cd ..</code> e execute <code>dir /s</code>. Observe o que muda em relação ao <code>dir</code> simples executado direto em <code>Labavancado_SeuNome</code>.</li>
       <li>Entre em <code>Relatorios</code> e execute <code>dir /o:n</code> e depois <code>dir /o:-d</code> (ela deve ter as subpastas 2025 e 2026 dentro). Anote a diferença na ordem de exibição.</li>
     </ol>
     <div class="caixa verificacao">
@@ -250,7 +250,7 @@
   <div class="tarefa">
     <h4>Tarefa 4 — Caminhos relativos vs. absolutos (sem copiar exemplo pronto)</h4>
     <p class="objetivo">Objetivo: calcular caminhos em vez de decorá-los.</p>
-    <p>Considere que seu prompt está atualmente dentro de <code>LabAvancado\Relatorios\2026</code> (confirme com o comando que mostra o diretório atual antes de prosseguir).</p>
+    <p>Considere que seu prompt está atualmente dentro de <code>Labavancado_SeuNome\Relatorios\2026</code> (confirme com o comando que mostra o diretório atual antes de prosseguir).</p>
     <ol>
       <li><strong>Sem digitar o caminho completo</strong>, calcule (no papel ou em um arquivo de respostas) o caminho <strong>relativo</strong> que leva até a pasta <code>Relatorios\2025</code> — uma pasta "irmã" da atual —, usando <code>..</code> quando necessário.</li>
       <li>Use esse caminho relativo para <strong>entrar de fato</strong> na pasta, com <code>cd &lt;seu_caminho_relativo&gt;</code>. Confirme que chegou ao lugar certo executando <code>cd</code> sozinho, sem parâmetros (ele mostra o diretório atual).</li>
@@ -279,7 +279,7 @@
       <tr><td><code>|</code></td><td>Pipe (encadeamento)</td><td>Pega a saída do comando à esquerda e a entrega como entrada para o comando à direita, encadeando os dois. Não cria nem altera nenhum arquivo — o resultado final ainda aparece na tela, já filtrado pelo segundo comando.</td></tr>
     </table>
     <ol>
-      <li>Dentro de <code>LabAvancado</code>, gere um arquivo de inventário com <code>dir /s &gt; inventario.txt</code>.</li>
+      <li>Dentro de <code>Labavancado_SeuNome</code>, gere um arquivo de inventário com <code>dir /s &gt; inventario.txt</code>.</li>
       <li>Abra o arquivo <code>inventario.txt</code> executando o comando <code>notepad inventario.txt</code> e confira o conteúdo.</li>
       <li>Adicione uma nova informação ao final do mesmo arquivo, sem apagar o que já existe, usando <code>echo Gerado em: %DATE% %TIME% &gt;&gt; inventario.txt</code>.</li>
       <li>Use o comando <code>dir | find "txt"</code> para listar, na tela, apenas as linhas que contêm "txt" na saída do <code>dir</code>.</li>
@@ -311,7 +311,7 @@
     <h4>Tarefa 7 — Ocultos e extensões</h4>
     <p class="objetivo">Objetivo: revelar informações que o Explorador esconde por padrão.</p>
     <ol>
-      <li>Abra o Explorador de Arquivos e navegue até <code>LabAvancado\Temp</code>.</li>
+      <li>Abra o Explorador de Arquivos e navegue até <code>Labavancado_SeuNome\Temp</code>.</li>
       <li>Sem alterar nenhuma opção ainda, veja se o arquivo <code>oculto.txt</code> (criado na Tarefa 1) aparece.</li>
       <li>Vá em <strong>Exibir → Mostrar → Itens ocultos</strong> (ou "Opções" → aba "Modo de Exibição" → "Arquivos e pastas ocultos" nas versões mais antigas) e ative a opção.</li>
       <li>Confirme que <code>oculto.txt</code> agora aparece, exibido de forma esmaecida.</li>
@@ -356,7 +356,7 @@
     <h4>Tarefa 10 — Pesquisa com filtros</h4>
     <p class="objetivo">Objetivo: usar a busca do Explorador de forma direcionada, não apenas digitando um nome.</p>
     <ol>
-      <li>Na pasta <code>LabAvancado</code>, clique na barra de pesquisa do Explorador.</li>
+      <li>Na pasta <code>Labavancado_SeuNome</code>, clique na barra de pesquisa do Explorador.</li>
       <li>Use o filtro de tipo digitando <code>tipo:pasta compactada</code> (ou selecione o filtro equivalente que aparece sugerido) para localizar apenas o arquivo <code>.zip</code> criado.</li>
       <li>Limpe a pesquisa e agora filtre por data de modificação, escolhendo "Hoje" (ou o filtro de data equivalente), para ver todos os itens criados durante este laboratório.</li>
       <li>Por fim, pesquise por tamanho, filtrando por arquivos "pequenos" ou "vazios", e observe quais aparecem.</li>
