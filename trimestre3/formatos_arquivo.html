@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formatos de Arquivo: Texto, CSV, Markdown, HTML, Google Docs e OpenOffice</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:270px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-290px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0;}
+  nav.sumario ol{padding-left:18px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario ol ol{margin-top:8px;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:860px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  figure{margin:26px 0; text-align:center;}
+  figure img, figure svg{max-width:100%; height:auto; border:1px solid var(--borda); border-radius:6px; background:#fff;}
+  figcaption{font-size:0.88em; color:#5a6a75; margin-top:8px; font-style:italic;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  pre{
+    background:#20303c; color:#e8f0f5; padding:14px 16px; border-radius:6px;
+    overflow-x:auto; font-family: Consolas, "Courier New", monospace; font-size:0.9em;
+    margin:14px 0;
+  }
+  pre code{background:none; padding:0; color:inherit;}
+  ul, ol{margin:10px 0; padding-left:24px;}
+  .exercicios ol > li{margin-bottom:10px;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#7a8a94;}
+  footer ul{padding-left:20px;}
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+  }
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle">☰</label>
+  <span class="titulo-topo">Softwares e Aplicativos</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#intro">Introdução</a></li>
+    <li><a href="#texto">Arquivos de texto</a>
+      <ol>
+        <li><a href="#texto-tipos">Tipos de arquivo de texto</a></li>
+        <li><a href="#texto-extensoes">Extensões mais comuns</a></li>
+        <li><a href="#texto-abrir">Como abrir</a></li>
+      </ol>
+    </li>
+    <li><a href="#csv">CSV (Comma Separated Values)</a>
+      <ol>
+        <li><a href="#csv-caracteristicas">Características</a></li>
+        <li><a href="#csv-vantagens">Vantagens e desvantagens</a></li>
+      </ol>
+    </li>
+    <li><a href="#markdown">Markdown básico</a>
+      <ol>
+        <li><a href="#markdown-vantagens">Vantagens do Markdown</a></li>
+        <li><a href="#markdown-titulos">Títulos e ênfase</a></li>
+        <li><a href="#markdown-listas">Listas</a></li>
+        <li><a href="#markdown-links">Links, imagens, código e citações</a></li>
+      </ol>
+    </li>
+    <li><a href="#html">HTML básico</a>
+      <ol>
+        <li><a href="#html-estrutura">Estrutura de um documento</a></li>
+        <li><a href="#html-tags">Títulos, parágrafos e linha horizontal</a></li>
+        <li><a href="#html-comentarios">Comentários e imagens</a></li>
+      </ol>
+    </li>
+    <li><a href="#gdocs">Google Docs</a>
+      <ol>
+        <li><a href="#gdocs-funcionalidades">Principais funcionalidades</a></li>
+        <li><a href="#gdocs-interface">Interface</a></li>
+        <li><a href="#gdocs-menus">Menus</a></li>
+      </ol>
+    </li>
+    <li><a href="#openoffice">OpenOffice</a></li>
+    <li><a href="#creditos">Créditos</a></li>
+  </ol>
+</nav>
+<main>
+  <h1>Formatos de Arquivo: Texto, CSV, Markdown, HTML, Google Docs e OpenOffice</h1>
+  <p class="subtitulo">Como diferentes aplicativos armazenam e organizam informação</p>
+
+  <h2 id="intro">Introdução</h2>
+  <p>Todo programa que usamos no dia a dia — um editor de texto, uma planilha, um navegador — precisa gravar e ler informações em algum formato. Nesta aula vamos conhecer alguns formatos e ferramentas muito comuns: o <strong>arquivo de texto puro</strong>, o formato <strong>CSV</strong> (usado para tabelas), o <strong>Markdown</strong> (usado para formatar texto de forma simples), a linguagem <strong>HTML</strong> (usada para páginas web), o <strong>Google Docs</strong>, um editor de texto online, e o <strong>OpenOffice</strong>, um pacote de escritório gratuito. Apesar de parecerem assuntos distintos, todos eles compartilham uma mesma base: texto simples, organizado de formas diferentes para atender a necessidades diferentes.</p>
+
+  <h2 id="texto">1. Arquivos de texto</h2>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    Um <strong>arquivo de texto</strong> é um arquivo que armazena dados apenas em formato textual — letras, números e símbolos — usando uma codificação de caracteres como <strong><a href="https://pt.wikipedia.org/wiki/ASCII" target="_blank" rel="noopener">ASCII</a></strong> ou <strong><a href="https://en.wikipedia.org/wiki/UTF-8" target="_blank" rel="noopener">UTF-8</a></strong>. Diferente de um arquivo executável, ele não contém instruções que o computador possa "rodar" diretamente: seu conteúdo só faz sentido quando aberto e interpretado por um programa (um editor de texto, um navegador, etc.).
+  </div>
+
+  <p>Por serem simples e legíveis por praticamente qualquer programa, arquivos de texto são usados para os mais variados fins: desde um bilhete rápido até o código-fonte de um sistema inteiro.</p>
+
+  <figure>
+    <img src="notepad.png" alt="Arquivo de texto aberto no Bloco de Notas do Windows, mostrando conteúdo simples em texto puro">
+    <figcaption>Figura 1 — Um arquivo de texto criado no Bloco de Notas (Notepad). (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <h3 id="texto-tipos">1.1 Tipos de arquivo de texto</h3>
+  <p>Embora todos guardem apenas texto, diferentes tipos de arquivo de texto organizam esse conteúdo de formas diferentes, cada um pensado para um uso específico:</p>
+  <ul>
+    <li><strong>Texto puro (plain text)</strong> — apenas caracteres, sem nenhuma formatação especial. Extensão típica: <code>.txt</code>.</li>
+    <li><strong>Arquivo separado por vírgulas (CSV)</strong> — texto organizado em linhas e colunas, separadas por vírgulas, para representar tabelas. Veremos em detalhe na próxima seção.</li>
+    <li><strong>Arquivo HTML</strong> — texto com marcações (tags) que descrevem a estrutura de uma página web. Também será visto adiante.</li>
+    <li><strong>Doc e Docx</strong> — formatos de documentos de processadores de texto (como o Word), que guardam, além do texto, formatação, imagens e estilos.</li>
+    <li><strong>Markdown</strong> — texto simples com uma sintaxe leve de formatação (como <code>**negrito**</code> ou <code>#</code> para títulos), muito usado em documentação de software.</li>
+    <li><strong>Código-fonte</strong> — arquivos de texto escritos em uma linguagem de programação, como Python (<code>.py</code>) ou C++ (<code>.cpp</code>).</li>
+  </ul>
+
+  <h3 id="texto-extensoes">1.2 Extensões mais comuns</h3>
+  <table>
+    <tr><th>Extensão</th><th>Tipo de conteúdo</th></tr>
+    <tr><td><code>.txt</code></td><td>Texto puro, sem formatação</td></tr>
+    <tr><td><code>.md</code></td><td>Texto em Markdown</td></tr>
+    <tr><td><code>.csv</code></td><td>Dados tabulares separados por vírgula</td></tr>
+    <tr><td><code>.docx</code></td><td>Documento do Microsoft Word</td></tr>
+    <tr><td><code>.html</code></td><td>Página web (HTML)</td></tr>
+    <tr><td><code>.py</code></td><td>Código-fonte em Python</td></tr>
+    <tr><td><code>.cpp</code></td><td>Código-fonte em C++</td></tr>
+  </table>
+
+  <h3 id="texto-abrir">1.3 Como abrir</h3>
+  <p>Um arquivo de texto puro pode ser aberto por praticamente qualquer editor de texto simples:</p>
+  <ul>
+    <li><strong>Windows</strong> — Bloco de Notas (Notepad).</li>
+    <li><strong>macOS</strong> — aplicativo TextEdit.</li>
+    <li><strong>Ubuntu</strong> — aplicativo Gedit.</li>
+  </ul>
+  
+
+  <h2 id="csv">2. CSV (Comma Separated Values)</h2>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    <strong>CSV</strong> significa <strong>Comma Separated Values</strong> ("valores separados por vírgula"). É um formato de arquivo de texto simples, usado para armazenar dados organizados em tabelas: cada linha do arquivo representa um registro (uma linha da tabela), e os valores de cada coluna são separados por vírgulas.
+  </div>
+
+  <p>Por exemplo, uma pequena tabela com notas de alunos poderia ser representada, em CSV, da seguinte forma:</p>
+  <pre><code>Nome,Nota,Turma
+Ana,8.5,101
+Bruno,7.0,102
+Carla,9.2,101
+Diego,6.5,102</code></pre>
+
+  <p>Quando esse arquivo é aberto em um programa de planilhas, ele é exibido como uma tabela comum:</p>
+  <table>
+    <tr><th>Nome</th><th>Nota</th><th>Turma</th></tr>
+    <tr><td>Ana</td><td>8.5</td><td>101</td></tr>
+    <tr><td>Bruno</td><td>7.0</td><td>102</td></tr>
+    <tr><td>Carla</td><td>9.2</td><td>101</td></tr>
+    <tr><td>Diego</td><td>6.5</td><td>102</td></tr>
+  </table>
+
+  <h3 id="csv-caracteristicas">2.1 Características do CSV</h3>
+  <ul>
+    <li>Os campos de cada linha são separados por vírgula (em alguns países, por ponto e vírgula, já que a vírgula é usada como separador decimal).</li>
+    <li>Cada linha do arquivo corresponde a um registro (uma linha da tabela).</li>
+    <li>Campos que contêm vírgulas, quebras de linha ou aspas geralmente precisam ser colocados entre aspas duplas.</li>
+    <li>Espaços em branco extras podem ser interpretados como parte do valor, dependendo do programa que lê o arquivo.</li>
+    <li>Não existe um "tipo" declarado para cada coluna — tudo é armazenado como texto, cabendo ao programa que lê o arquivo interpretar números, datas, etc.</li>
+  </ul>
+
+  <h3 id="csv-vantagens">2.2 Vantagens e desvantagens</h3>
+  <table>
+    <tr><th>Vantagens</th><th>Desvantagens</th></tr>
+    <tr><td>Formato leve e rápido de processar</td><td>Não distingue tipos de dado (número, texto, data)</td></tr>
+    <tr><td>Fácil de criar e editar, até manualmente</td><td>Não representa bem dados complexos ou aninhados</td></tr>
+    <tr><td>Suportado por praticamente todo software de planilha e banco de dados</td><td>Caracteres especiais (vírgula, aspas) podem causar erros de leitura</td></tr>
+    <tr><td>Estrutura simples e padronizada</td><td>Não é adequado para armazenar dados binários (imagens, áudio)</td></tr>
+    <tr><td>Arquivos compactos, ocupando pouco espaço</td><td>—</td></tr>
+  </table>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    Para dados mais complexos — com estruturas aninhadas, diferentes tipos ou hierarquias — formatos como <strong>JSON</strong> e <strong>XML</strong> costumam ser mais adequados do que o CSV, embora sejam menos compactos e mais difíceis de editar manualmente.
+  </div>
+
+  <h2 id="markdown">3. Markdown básico</h2>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    <strong>Markdown</strong> é uma linguagem de marcação leve, criada por John Gruber em 2004, usada para formatar texto de forma simples, sem precisar de tags complexas como as do HTML. Um arquivo Markdown geralmente usa a extensão <code>.md</code> ou <code>.markdown</code>, e pode ser convertido para HTML, PDF e outros formatos por um programa chamado <strong>processador (ou parser) de Markdown</strong>.
+  </div>
+
+  <p>Por ser simples de escrever e de ler mesmo sem conversão, o Markdown é muito usado em plataformas como GitHub, Bitbucket e StackOverflow para formatar textos, documentações e mensagens.</p>
+
+  <h3 id="markdown-vantagens">3.1 Vantagens do Markdown</h3>
+  <ul>
+    <li>Não é uma linguagem exclusiva para programadores: também é usada para escrever e-books.</li>
+    <li>Pode ser convertido para diversos formatos, como PDF, HTML e documentos de texto.</li>
+    <li>Permite formatar até mesmo e-mails, com ferramentas como o MarkdownHere.</li>
+    <li>É amplamente usado para escrever páginas formatadas em plataformas como StackOverflow e GitHub.</li>
+    <li>Arquivos Markdown podem ser transformados em páginas web, com ferramentas como o GitHub Pages.</li>
+  </ul>
+
+  <h3 id="markdown-titulos">3.2 Títulos e ênfase</h3>
+  <p>Os títulos são criados com o símbolo <code>#</code> no início da linha — quanto mais símbolos, menor o nível do título:</p>
+  <pre><code># Título 1
+## Título 2
+### Título 3
+#### Título 4</code></pre>
+
+  <p>Negrito e itálico são indicados usando asteriscos ou sublinhados ao redor do texto:</p>
+  <pre><code>*Isto fica em itálico*
+_Isto também fica em itálico_
+
+**Isto fica em negrito**
+__Isto também fica em negrito__</code></pre>
+
+  <h3 id="markdown-listas">3.3 Listas</h3>
+  <p>Listas numeradas usam números seguidos de ponto; listas sem numeração podem usar hífen ou asterisco. Também é possível criar sublistas, indentando os itens:</p>
+  <pre><code>1. Primeiro item
+2. Segundo item
+3. Terceiro item
+
+- Item A
+- Item B
+    - Subitem de B
+    - Outro subitem</code></pre>
+
+  <h3 id="markdown-links">3.4 Links, imagens, código e citações</h3>
+  <p>Links e imagens usam uma sintaxe parecida, com colchetes e parênteses — a única diferença é o ponto de exclamação antes dos colchetes, usado para imagens:</p>
+  <pre><code>[Texto do link](https://patricialucas.github.io/SwAppSo/)
+![Texto alternativo da imagem](caminho-da-imagem.png)</code></pre>
+
+  <p>Trechos de código podem aparecer no meio do texto (código em linha) ou em blocos separados; citações são marcadas com o símbolo <code>&gt;</code> no início da linha:</p>
+  <pre><code>Aqui vai um trecho de código em linha: `print("olá")`.
+
+```
+Este é um bloco de código,
+que pode ter várias linhas.
+```
+
+> Isto é uma citação.
+> Pode ocupar mais de uma linha.</code></pre>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    O arquivo <code>README.md</code>, tão comum em repositórios de código no GitHub, é justamente um arquivo escrito em Markdown — por isso ele aparece formatado (com títulos, listas e links) quando visualizado no site, mesmo sendo, na essência, um simples arquivo de texto.
+  </div>
+
+  <h2 id="html">4. HTML básico</h2>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    <strong>HTML</strong> (HyperText Markup Language) é a linguagem de marcação padrão usada para criar e estruturar páginas web. Diferente de uma linguagem de programação, o HTML não executa lógica — ele descreve <em>o que</em> cada parte do conteúdo é (um título, um parágrafo, uma imagem), e é o navegador quem decide como exibir cada elemento.
+  </div>
+
+  <h3 id="html-estrutura">4.1 Estrutura básica de um documento</h3>
+  <p>Todo documento HTML segue um esqueleto parecido, com quatro partes principais: a declaração de tipo de documento, e as tags <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code> e <code>&lt;body&gt;</code>.</p>
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Minha primeira página&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p&gt;Olá, mundo!&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <!-- <figure>
+    <img src="html.png" alt="Captura de tela mostrando a estrutura de um documento HTML em um editor de código">
+    <figcaption>Figura 2 — Estrutura de um documento HTML: declaração de tipo, e as seções head e body. (Fonte: GeeksforGeeks)</figcaption>
+  </figure> -->
+
+  <table>
+    <tr><th>Tag</th><th>Função</th></tr>
+    <tr><td><code>&lt;html&gt;</code></td><td>Elemento raiz, que envolve todo o documento.</td></tr>
+    <tr><td><code>&lt;head&gt;</code></td><td>Contém metadados da página: título, links para estilos, configurações — não é exibido na tela.</td></tr>
+    <tr><td><code>&lt;title&gt;</code></td><td>Define o título exibido na aba do navegador.</td></tr>
+    <tr><td><code>&lt;body&gt;</code></td><td>Contém todo o conteúdo visível da página.</td></tr>
+  </table>
+
+  <h3 id="html-tags">4.2 Títulos, parágrafos e linha horizontal</h3>
+  <p>O HTML define seis níveis de título, de <code>&lt;h1&gt;</code> (o mais importante e maior) até <code>&lt;h6&gt;</code> (o menos importante e menor):</p>
+  <pre><code>&lt;h1&gt;Título principal&lt;/h1&gt;
+&lt;h2&gt;Subtítulo&lt;/h2&gt;
+&lt;h3&gt;Um título menor&lt;/h3&gt;</code></pre>
+
+  <p>Parágrafos são delimitados pela tag <code>&lt;p&gt;</code>; já a tag <code>&lt;br&gt;</code> insere apenas uma quebra de linha, sem iniciar um novo parágrafo:</p>
+  <pre><code>&lt;p&gt;Esta é a primeira linha.&lt;br&gt;
+Esta continua no mesmo parágrafo, em outra linha.&lt;/p&gt;</code></pre>
+
+  <p>A tag <code>&lt;hr&gt;</code> ("horizontal rule") desenha uma linha horizontal, geralmente usada para separar visualmente seções de conteúdo.</p>
+
+  <h3 id="html-comentarios">4.3 Comentários e imagens</h3>
+  <p>Comentários em HTML não são exibidos pelo navegador — servem apenas para anotações do próprio programador. São escritos entre <code>&lt;!--</code> e <code>--&gt;</code>:</p>
+  <pre><code>&lt;!-- Isto é um comentário de uma linha --&gt;
+
+&lt;!--
+  Isto é um comentário
+  de várias linhas
+--&gt;</code></pre>
+
+
+  <p>Imagens são inseridas com a tag <code>&lt;img&gt;</code>, que não tem tag de fechamento e usa o atributo <code>src</code> para indicar o caminho do arquivo:</p>
+  <pre><code>&lt;img src="foto.jpg" alt="Descrição da imagem"&gt;</code></pre>
+
+
+  <h2 id="gdocs">5. Google Docs</h2>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    O <strong>Google Docs</strong> é um processador de texto gratuito e baseado em nuvem, lançado pelo Google em 2006. Diferente de um editor tradicional instalado no computador, ele permite criar, editar e armazenar documentos diretamente pelo navegador, com <strong>colaboração em tempo real</strong> e <strong>salvamento automático</strong>.
+  </div>
+
+  <h3 id="gdocs-funcionalidades">5.1 Principais funcionalidades</h3>
+  <ul>
+    <li><strong>Colaboração em tempo real</strong> — várias pessoas podem editar o mesmo documento ao mesmo tempo, vendo as alterações umas das outras instantaneamente.</li>
+    <li><strong>Armazenamento em nuvem e salvamento automático</strong> — o documento fica salvo no Google Drive, sem precisar clicar em "Salvar".</li>
+    <li><strong>Modo offline</strong> — é possível continuar editando mesmo sem conexão à internet, sincronizando depois.</li>
+    <li><strong>Modelos (templates)</strong> — modelos prontos para currículos, relatórios, cartas, entre outros.</li>
+    <li><strong>Histórico de versões</strong> — permite ver e restaurar versões anteriores do documento.</li>
+    <li><strong>Complementos e integrações</strong> — extensões que adicionam funções extras ao editor.</li>
+    <li><strong>Compartilhamento e permissões</strong> — controle de quem pode visualizar, comentar ou editar o documento.</li>
+    <li><strong>Digitação por voz</strong> — permite ditar o texto em vez de digitá-lo.</li>
+  </ul>
+
+  <h3 id="gdocs-interface">5.2 Interface</h3>
+  <p>A tela do Google Docs é dividida em algumas áreas principais:</p>
+
+  <figure>
+    <img src="barra_menu.png" alt="Barra de menus do Google Docs, com as opções Arquivo, Editar, Ver, Inserir, Formatar, Ferramentas, Extensões e Ajuda">
+    <figcaption>Figura 3 — Barra de menus, no topo da tela. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <figure>
+    <img src="barra_ferramentas.png" alt="Barra de ferramentas do Google Docs, com ícones de formatação de texto">
+    <figcaption>Figura 4 — Barra de ferramentas, logo abaixo da barra de menus, com atalhos de formatação. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <figure>
+    <img src="documento_area.png" alt="Área central de edição do documento no Google Docs">
+    <figcaption>Figura 5 — Área do documento: o espaço central de edição, com réguas indicando as margens. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <figure>
+    <img src="colaboracao.png" alt="Canto superior direito do Google Docs, com o botão Compartilhar e ícones de comentário e chat">
+    <figcaption>Figura 6 — Ferramentas de colaboração, no canto superior direito: compartilhar, comentar e conversar. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <figure>
+    <img src="barra_lateral_direita.png" alt="Barra lateral direita do Google Docs, mostrando comentários e sugestões">
+    <figcaption>Figura 7 — Barra lateral direita, usada para comentários, sugestões de edição e a ferramenta Explorar. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <figure>
+    <img src="barra_lateral_esquerda.png" alt="Barra lateral esquerda do Google Docs, mostrando o esboço do documento por títulos">
+    <figcaption>Figura 8 — Barra lateral esquerda (esboço), que lista os títulos do documento para facilitar a navegação. (Fonte: GeeksforGeeks)</figcaption>
+  </figure>
+
+  <h3 id="gdocs-menus">5.3 Menus</h3>
+  <table>
+    <tr><th>Menu</th><th>O que contém</th></tr>
+    <tr><td>Arquivo (File)</td><td>Criar, salvar, baixar, imprimir e ver o histórico de versões do documento.</td></tr>
+    <tr><td>Editar (Edit)</td><td>Desfazer, refazer, recortar, copiar, colar, localizar e substituir.</td></tr>
+    <tr><td>Ver (View)</td><td>Modos de exibição, réguas, linhas de grade e esboço do documento.</td></tr>
+    <tr><td>Inserir (Insert)</td><td>Imagens, tabelas, gráficos, cabeçalhos, rodapés e links.</td></tr>
+    <tr><td>Formatar (Format)</td><td>Estilo do texto, parágrafos, alinhamento e listas.</td></tr>
+    <tr><td>Ferramentas (Tools)</td><td>Verificação ortográfica, contagem de palavras, digitação por voz e Explorar.</td></tr>
+    <tr><td>Extensões (Extensions)</td><td>Instalação e gerenciamento de complementos.</td></tr>
+    <tr><td>Ajuda (Help)</td><td>Central de ajuda, atalhos de teclado e treinamento.</td></tr>
+  </table>
+
+  <h2 id="openoffice">6. OpenOffice</h2>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    O <strong><a href="https://www.openoffice.org/" target="_blank" rel="noopener">Apache OpenOffice</a></strong> é um pacote de escritório (office suite) de código aberto, com editor de texto, planilha, apresentações, banco de dados e ferramentas de desenho, disponível para os principais sistemas operacionais. Diferente do Google Docs, ele é instalado no computador e funciona normalmente sem conexão à internet.
+  </div>
+
+  <p>Segundo o próprio site do projeto, três motivos resumem por que escolher o OpenOffice:</p>
+  <ul>
+    <li><strong>Bom software</strong> — resultado de mais de vinte anos de desenvolvimento, com design consistente entre suas ferramentas e um processo aberto, em que a própria comunidade de usuários relata problemas e sugere melhorias.</li>
+    <li><strong>Fácil de usar</strong> — interface familiar para quem já usa outros pacotes de escritório, com suporte de comunidades em diversos idiomas e boa compatibilidade com arquivos de outros programas.</li>
+    <li><strong>Totalmente gratuito</strong> — pode ser baixado, instalado e usado sem nenhum custo de licença, sob a licença Apache 2.0, para uso pessoal, comercial, educacional ou governamental, sem limite de instalações.</li>
+  </ul>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    Ao contrário de pacotes pagos, que costumam exigir a compra de uma licença ou o pagamento de uma assinatura, o OpenOffice pode ser instalado em quantos computadores forem necessários sem custo algum — uma vantagem importante para escolas, órgãos públicos e qualquer pessoa que queira economizar.
+  </div>
+
+  <p>Os documentos criados no OpenOffice são salvos em um formato aberto e padronizado internacionalmente, mas o programa também consegue abrir e salvar arquivos em formatos usados por outros pacotes de escritório, como o <code>.docx</code> do Microsoft Word.</p>
+
+  <p>O editor de texto do pacote se chama <strong>Writer</strong>. Assim como o Microsoft Word, ele permite criar desde um simples bilhete até documentos longos e complexos, como livros com índice e diagramas, contando com verificação ortográfica automática, ferramentas de estilo e formatação, e a possibilidade de exportar o documento para outros formatos, como <code>.docx</code>, HTML e PDF.</p>
+
+
+  <footer id="creditos">
+    <h2 style="border:none; margin-top:20px;">7. Créditos e referências</h2>
+    <p>Material organizado didaticamente a partir dos seguintes artigos do GeeksforGeeks:</p>
+    <ul>
+      <li><a href="https://www.geeksforgeeks.org/techtips/what-is-a-text-file/" target="_blank" rel="noopener">"What is a Text File?"</a></li>
+      <li><a href="https://www.geeksforgeeks.org/dbms/what-is-full-form-of-csv/" target="_blank" rel="noopener">"What is full form of CSV?"</a></li>
+      <li><a href="https://www.geeksforgeeks.org/html/introduction-to-markdown/" target="_blank" rel="noopener">"Introduction to Markdown"</a></li>
+      <li><a href="https://www.geeksforgeeks.org/html/html-basics/" target="_blank" rel="noopener">"HTML Basics"</a></li>
+      <li><a href="https://www.geeksforgeeks.org/google-docs/what-is-google-docs/" target="_blank" rel="noopener">"What is Google Docs?"</a></li>
+    </ul>
+    <p>Instituto Federal de Minas Gerais — Curso Técnico em Informática — Disciplina: Softwares, Aplicativos e Sistemas Operacionais.</p>
+  </footer>
+</main>
+</div>
+</body>
+</html>
