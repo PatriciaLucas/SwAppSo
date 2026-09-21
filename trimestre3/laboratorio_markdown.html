@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial prático de Markdown</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:260px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-280px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0; border:none; padding:0;}
+  nav.sumario ol{padding-left:26px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  nav.sumario p{font-size:0.92em; margin:14px 0 0; padding-top:10px; border-top:1px solid var(--borda);}
+  /* véu escurecido atrás do conteúdo quando o menu está aberto; clicar nele fecha o menu */
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:850px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px; scroll-margin-top:72px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa.pratique{border-left-color:var(--azul-claro); background:#e3f0f8;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  .caixa.pratique strong.rotulo{color:var(--azul-claro);}
+  .caixa > :last-child{margin-bottom:0;}
+  .caixa pre{margin:10px 0;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  pre{
+    background:#1e2b36; color:#e8eef2; padding:12px 14px; border-radius:6px;
+    overflow-x:auto; font-size:0.88em; line-height:1.5; margin:12px 0;
+    font-family: Consolas, "Courier New", monospace; white-space:pre;
+  }
+  pre code{background:none; padding:0; color:inherit; font-size:inherit; border-radius:0;}
+  ul, ol{margin:10px 0; padding-left:24px;}
+  a{color:var(--azul-claro);}
+
+  /* Tabelas "Você digita / Resultado" */
+  .rolagem{overflow-x:auto;}
+  table.demo{table-layout:fixed;}
+  table.demo > tbody > tr > td{background:#fff; width:50%;}
+  table.demo > tbody > tr > td.resultado{background:#fff; overflow-wrap:anywhere;}
+  table.demo pre{margin:0;}
+  table.demo td.resultado > :first-child{margin-top:0;}
+  table.demo td.resultado > :last-child{margin-bottom:0;}
+  table.demo td.resultado blockquote{margin:0; padding:4px 14px; border-left:4px solid var(--borda); color:#4a5a65; background:#f6f9fb;}
+  table.demo td.resultado blockquote blockquote{margin:8px 0 0;}
+  table.demo td.resultado img, table.demo td.resultado svg{max-width:100%; height:auto;}
+  table.demo td.resultado table{font-size:0.95em; margin:0;}
+  .hd{color:var(--azul); font-weight:700; line-height:1.25; margin:2px 0;}
+  .hd1{font-size:1.7em;} .hd2{font-size:1.4em;} .hd3{font-size:1.2em;}
+  .hd4{font-size:1.05em;} .hd5{font-size:.95em;} .hd6{font-size:.85em;}
+  .notas-rodape{border-top:1px solid var(--borda); margin-top:12px; padding-top:6px; font-size:.9em; color:#4a5a65;}
+  dl{margin:0;} dt{font-weight:700;} dd{margin:0 0 8px 20px;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#5f6f79;}
+  footer h2{border:none; margin-top:20px; font-size:1.2em;}
+
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+  }
+  /* Em telas estreitas, as duas colunas "Você digita / Resultado" ficam uma sobre a outra */
+  @media (max-width: 700px){
+    table.demo, table.demo > tbody, table.demo > tbody > tr, table.demo > tbody > tr > td{display:block; width:100%;}
+    table.demo > thead{display:none;}
+    table.demo > tbody > tr > td::before{
+      content:attr(data-l); display:block; font-size:.75em; text-transform:uppercase;
+      letter-spacing:.06em; font-weight:700; color:var(--azul-claro); margin-bottom:6px;
+    }
+  }
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle" title="Abrir ou fechar o sumário">☰</label>
+  <span class="titulo-topo">Tutorial prático de Markdown</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol start="0">
+    <li><a href="#inicio">Antes de começar</a></li>
+    <li><a href="#titulos">Títulos</a></li>
+    <li><a href="#paragrafos">Parágrafos</a></li>
+    <li><a href="#quebras">Quebras de linha</a></li>
+    <li><a href="#enfase">Ênfase</a></li>
+    <li><a href="#citacoes">Citações</a></li>
+    <li><a href="#listas">Listas</a></li>
+    <li><a href="#codigo">Código</a></li>
+    <li><a href="#linhas">Linhas horizontais</a></li>
+    <li><a href="#links">Links</a></li>
+    <li><a href="#imagens">Imagens</a></li>
+    <li><a href="#escape">Caracteres de escape</a></li>
+    <li><a href="#tabelas">Tabelas</a></li>
+    <li><a href="#rodape">Notas de rodapé</a></li>
+    <li><a href="#ids">IDs de títulos</a></li>
+    <li><a href="#listas-definicao">Listas de definição</a></li>
+    <li><a href="#tachado">Tachado</a></li>
+    <li><a href="#tarefas">Listas de tarefas</a></li>
+    <li><a href="#emoji">Emoji</a></li>
+    <li><a href="#destaque">Destaque</a></li>
+    <li><a href="#subscrito">Subscrito</a></li>
+    <li><a href="#sobrescrito">Sobrescrito</a></li>
+  </ol>
+  <p><a href="#creditos">Créditos e referências</a></p>
+</nav>
+<main>
+  <h1>Tutorial prático de Markdown</h1>
+  <p class="subtitulo">Aprenda Markdown escrevendo, passo a passo, uma indicação de livro ou filme de que você gosta</p>
+
+  <!-- ===================== SEÇÃO 0 ===================== -->
+  <h2 id="inicio">0. Antes de começar</h2>
+
+  <h3>O que é Markdown?</h3>
+  <p>Markdown é uma forma simples de escrever textos formatados. Você digita texto puro, com alguns símbolos (como <code>#</code>, <code>*</code> e <code>&gt;</code>), e um programa transforma esses símbolos em títulos, negrito, listas, links e muito mais. Ele foi criado por John Gruber em 2004 e hoje aparece em muitos lugares: nos arquivos README do GitHub, em documentações de programas, em blogs e em aplicativos de anotações.</p>
+
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    <strong>Linguagem de marcação leve</strong> é uma maneira de indicar a formatação de um texto usando poucos símbolos, escritos junto com o próprio texto. No Markdown, o arquivo continua sendo texto puro e pode ser aberto em qualquer editor simples, como o Bloco de Notas.
+  </div>
+
+  <h3>Conhecendo o JotBird</h3>
+  <p>Para testar o que você aprender, vamos usar o <strong>JotBird</strong>, uma ferramenta online e gratuita. Ela tem um editor de Markdown, uma pré-visualização do resultado e permite publicar o texto como uma página com link compartilhável.</p>
+  <ol>
+    <li>Abra o endereço <a href="https://www.jotbird.com/" target="_blank" rel="noopener">https://www.jotbird.com/</a>.</li>
+    <li>Crie uma conta com seu email.</li>
+    <li>Entre no editor clicando em <strong>Open app.</strong></li>
+  </ol>
+
+
+  <h3>O tema do seu texto</h3>
+  <p>Ao longo do tutorial, você vai escrever uma ficha de recomendação com o título <strong>“Minha indicação: um livro ou filme de que eu gosto”</strong>. A obra pode ser um livro, um filme, uma série de filmes ou uma saga, à sua escolha. </p>
+  <p>Sua ficha deve ter no mínimo 4 páginas completas e deve conter todos os elementos markdown vistos no tutorial. Para verificar o número de páginas, clique em <strong>Document -> Print or save as PDF.</strong></p>
+  <p>Nas explicações, usaremos como modelo o filme <em>Toy Story</em> (1995). Os exemplos são só um ponto de partida: o conteúdo que você escrever deve ser sobre a <strong>sua</strong> obra.</p>
+  
+  <h3>Entrega da Atividade 1</h3>
+  <p>Ao final do tutorial, publique seu texto clicando em <strong>Publish</strong> e envie o link pelo Classroom. </p>
+  
+  <!-- <h3>Mapa do tutorial</h3>
+  <p>A tabela abaixo mostra o que você vai construir no seu texto final, seção por seção.</p>
+  <div class="rolagem">
+  <table>
+    <tr><th>Recurso</th><th>Seção</th><th>Onde será usado no seu texto</th></tr>
+    <tr><td>Títulos</td><td><a href="#titulos">1</a></td><td>Título principal e subtítulos</td></tr>
+    <tr><td>Parágrafos</td><td><a href="#paragrafos">2</a></td><td>Sinopse e motivo da escolha</td></tr>
+    <tr><td>Quebras de linha</td><td><a href="#quebras">3</a></td><td>Ficha da obra (título, autor ou diretor, ano, gênero)</td></tr>
+    <tr><td>Ênfase</td><td><a href="#enfase">4</a></td><td>Títulos em itálico, personagens em negrito</td></tr>
+    <tr><td>Citações</td><td><a href="#citacoes">5</a></td><td>Uma frase marcante da obra</td></tr>
+    <tr><td>Listas</td><td><a href="#listas">6</a></td><td>Momentos favoritos e personagens</td></tr>
+    <tr><td>Código</td><td><a href="#codigo">7</a></td><td>Nome do arquivo e ficha técnica</td></tr>
+    <tr><td>Linhas horizontais</td><td><a href="#linhas">8</a></td><td>Separar a sinopse da opinião pessoal</td></tr>
+    <tr><td>Links</td><td><a href="#links">9</a></td><td>Página sobre a obra e e-mail para contato</td></tr>
+    <tr><td>Imagens</td><td><a href="#imagens">10</a></td><td>Capa do livro ou cartaz do filme</td></tr>
+    <tr><td>Caracteres de escape</td><td><a href="#escape">11</a></td><td>Mostrar símbolos como <code>*</code> e <code>#</code> no texto</td></tr>
+    <tr><td>Tabelas</td><td><a href="#tabelas">12</a></td><td>Notas para a obra</td></tr>
+    <tr><td>Notas de rodapé</td><td><a href="#rodape">13</a></td><td>Uma curiosidade ou fonte</td></tr>
+    <tr><td>IDs de títulos</td><td><a href="#ids">14</a></td><td>Pequeno sumário com links no início</td></tr>
+    <tr><td>Listas de definição</td><td><a href="#listas-definicao">15</a></td><td>Termos do universo da obra</td></tr>
+    <tr><td>Tachado</td><td><a href="#tachado">16</a></td><td>Uma opinião que mudou</td></tr>
+    <tr><td>Listas de tarefas</td><td><a href="#tarefas">17</a></td><td>Checklist de outras obras da saga ou do autor</td></tr>
+    <tr><td>Emoji</td><td><a href="#emoji">18</a></td><td>O que a obra faz você sentir</td></tr>
+    <tr><td>Destaque</td><td><a href="#destaque">19</a></td><td>A frase que resume sua recomendação</td></tr>
+    <tr><td>Subscrito e sobrescrito</td><td><a href="#subscrito">20</a> e <a href="#sobrescrito">21</a></td><td>Numeração de saga, posição entre os favoritos</td></tr>
+    <tr><td>Links automáticos</td><td><a href="#autolinks">22</a></td><td>Endereço de trailer ou página</td></tr>
+  </table>
+  </div> -->
+
+  <!-- ===================== SEÇÃO 1 ===================== -->
+  <h2 id="titulos">1. Títulos (Headings)</h2>
+  <p>Títulos organizam o texto em partes. Para criar um título, coloque de um a seis símbolos <code>#</code> antes do texto: quanto mais <code>#</code>, menor o nível do título (de 1 a 6). Há também uma sintaxe alternativa, que sublinha o texto com <code>===</code> (nível 1) ou <code>---</code> (nível 2).</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code># Título nível 1
+## Título nível 2
+### Título nível 3
+#### Título nível 4
+##### Título nível 5
+###### Título nível 6</code></pre></td>
+      <td class="resultado" data-l="Resultado">
+        <div class="hd hd1">Título nível 1</div>
+        <div class="hd hd2">Título nível 2</div>
+        <div class="hd hd3">Título nível 3</div>
+        <div class="hd hd4">Título nível 4</div>
+        <div class="hd hd5">Título nível 5</div>
+        <div class="hd hd6">Título nível 6</div>
+      </td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <!-- <p>Sintaxe alternativa (só existe para os níveis 1 e 2):</p>
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Título nível 1
+==============
+
+Título nível 2
+--------------</code></pre></td>
+      <td class="resultado" data-l="Resultado">
+        <div class="hd hd1">Título nível 1</div>
+        <div class="hd hd2">Título nível 2</div>
+      </td>
+    </tr></tbody>
+  </table>
+  </div> -->
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Crie um <strong>título principal</strong> (nível 1) que comece com “Minha indicação:”.</li>
+      <li>Abaixo dele, crie dois <strong>subtítulos</strong> (nível 2): “Sobre a obra” e “Por que eu gosto”.</li>
+      <li>Confira a pré-visualização: os três títulos devem aparecer com tamanhos diferentes.</li>
+    </ol>
+    <p>Exemplo de partida (troque pelo nome da sua obra):</p>
+<pre><code># Minha indicação: Toy Story
+
+## Sobre a obra
+
+## Por que eu gosto</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 2 ===================== -->
+  <h2 id="paragrafos">2. Parágrafos</h2>
+  <p>Para criar parágrafos, separe os blocos de texto com uma <strong>linha em branco</strong>. Não comece o parágrafo com espaços ou tabulações (o recuo do <kbd>Tab</kbd>), pois isso pode mudar o resultado.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Este é o primeiro parágrafo.
+
+Este é o segundo parágrafo.</code></pre></td>
+      <td class="resultado" data-l="Resultado">
+        <p>Este é o primeiro parágrafo.</p>
+        <p>Este é o segundo parágrafo.</p>
+      </td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Embaixo do subtítulo “Sobre a obra”, escreva uma <strong>breve sinopse</strong> da obra, sem contar o final.</li>
+      <li>Embaixo de “Por que eu gosto”, escreva um parágrafo explicando <strong>por que você escolheu</strong> essa obra.</li>
+      <li>Confira se os dois textos aparecem separados na pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida (escreva com as suas palavras):</p>
+<pre><code>## Sobre a obra
+
+Woody é o brinquedo favorito de Andy, até que chega Buzz Lightyear, um boneco que acha que é um herói de verdade.
+
+## Por que eu gosto
+
+Eu escolhi esse filme porque ele mostra que amizade é mais importante do que ciúme.</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 3 ===================== -->
+  <h2 id="quebras">3. Quebras de linha (Line Breaks)</h2>
+  <p>Uma <strong>quebra de linha</strong> muda de linha dentro do mesmo parágrafo, enquanto um <strong>novo parágrafo</strong> deixa um espaço maior entre os blocos. Para fazer uma quebra de linha, termine a linha com <strong>dois espaços</strong> e aperte <kbd>Enter</kbd>. Sem os dois espaços, o Markdown junta as linhas em uma só.</p>
+
+  <p>No exemplo abaixo, as duas primeiras linhas terminam com dois espaços (eles não aparecem, mas estão lá). A terceira não tem os espaços e, por isso, se junta à quarta:</p>
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Esta é a primeira linha.  
+Esta é a segunda linha.  
+Esta é a terceira linha.
+Esta linha ficou sem os espaços.</code></pre></td>
+      <td class="resultado" data-l="Resultado">
+        <p>Esta é a primeira linha.<br>Esta é a segunda linha.<br>Esta é a terceira linha. Esta linha ficou sem os espaços.</p>
+      </td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    Os espaços do fim da linha são invisíveis. Se o seu editor ou o JotBird remover esses espaços ao colar o texto, digite-os manualmente. Se as linhas aparecerem coladas na pré-visualização, é sinal de que faltaram os dois espaços.
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Logo abaixo do título principal, escreva a <strong>ficha da obra</strong> em linhas seguidas, dentro do mesmo parágrafo: título, autor ou diretor, ano e gênero.</li>
+      <li>Termine cada linha (menos a última) com dois espaços e confira, na pré-visualização, se cada informação ficou em uma linha.</li>
+    </ol>
+    <p>Exemplo de partida (lembre-se dos dois espaços no fim das três primeiras linhas):</p>
+<pre><code>Título: Toy Story  
+Direção: John Lasseter  
+Ano: 1995  
+Gênero: animação e aventura</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 4 ===================== -->
+  <h2 id="enfase">4. Ênfase</h2>
+  <p>A ênfase destaca palavras. Para deixar em <strong>negrito</strong>, coloque dois asteriscos (<code>**</code>) ou dois sublinhados (<code>__</code>) antes e depois do texto. Para <em>itálico</em>, use um só (<code>*</code> ou <code>_</code>). Para os dois efeitos ao mesmo tempo, use três (<code>***</code> ou <code>___</code>).</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>Woody é **corajoso**.
+Woody é __corajoso__.</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Woody é <strong>corajoso</strong>.<br>Woody é <strong>corajoso</strong>.</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>O filme é *divertido*.
+O filme é _divertido_.</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>O filme é <em>divertido</em>.<br>O filme é <em>divertido</em>.</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>Essa história é ***inesquecível***.
+Essa história é ___inesquecível___.</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Essa história é <strong><em>inesquecível</em></strong>.<br>Essa história é <strong><em>inesquecível</em></strong>.</p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>No seu texto, coloque os <strong>títulos de obras</strong> em itálico e os <strong>nomes de personagens</strong> em negrito.</li>
+      <li>Escolha <strong>uma palavra</strong> que resuma a obra e coloque-a em negrito e itálico ao mesmo tempo.</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida (adapte ao seu texto):</p>
+<pre><code>*Toy Story* é um filme sobre **Woody** e **Buzz Lightyear**. Para mim, a palavra que resume tudo é ***amizade***.</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 5 ===================== -->
+  <h2 id="citacoes">5. Citações (Blockquotes)</h2>
+  <p>Uma citação reproduz a fala ou o texto de alguém. Para criar uma, coloque o símbolo <code>&gt;</code> no início da linha. Para citar mais de um parágrafo, coloque <code>&gt;</code> também nas linhas em branco entre eles. Para uma citação dentro de outra (aninhada), use <code>&gt;&gt;</code>. Dentro de uma citação também podem entrar outros recursos do Markdown, como títulos, listas e ênfase.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>&gt; Ao infinito e além!</code></pre></td>
+        <td class="resultado" data-l="Resultado"><blockquote><p>Ao infinito e além!</p></blockquote></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>&gt; Ao infinito e além!
+&gt;
+&gt; — Buzz Lightyear</code></pre></td>
+        <td class="resultado" data-l="Resultado"><blockquote><p>Ao infinito e além!</p><p>— Buzz Lightyear</p></blockquote></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>&gt; Woody acha que Buzz é só um brinquedo.
+&gt;
+&gt;&gt; Buzz acha que é um herói de verdade.</code></pre></td>
+        <td class="resultado" data-l="Resultado"><blockquote><p>Woody acha que Buzz é só um brinquedo.</p><blockquote><p>Buzz acha que é um herói de verdade.</p></blockquote></blockquote></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>&gt; #### Personagens
+&gt;
+&gt; - **Woody**, o xerife
+&gt; - *Buzz*, o patrulheiro espacial</code></pre></td>
+        <td class="resultado" data-l="Resultado"><blockquote><div class="hd hd4">Personagens</div><ul><li><strong>Woody</strong>, o xerife</li><li><em>Buzz</em>, o patrulheiro espacial</li></ul></blockquote></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Inclua no seu texto uma <strong>frase marcante</strong> da obra (curta), indicando quem a disse, <strong>ou</strong> a opinião de outra pessoa sobre ela.</li>
+      <li>Escreva-a como citação, com o símbolo <code>&gt;</code>, e confira a pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida:</p>
+<pre><code>&gt; Ao infinito e além!
+&gt;
+&gt; — Buzz Lightyear</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 6 ===================== -->
+  <h2 id="listas">6. Listas</h2>
+  <p>Listas organizam itens em sequência. Em uma <strong>lista ordenada</strong>, cada item começa com um número seguido de ponto. Em uma <strong>lista não ordenada</strong>, cada item começa com <code>-</code>, <code>*</code> ou <code>+</code>. Para criar uma lista dentro de outra (lista aninhada), recue os itens internos com <strong>4 espaços</strong> (ou um <kbd>Tab</kbd>).</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>1. Primeiro item
+2. Segundo item
+3. Terceiro item</code></pre></td>
+        <td class="resultado" data-l="Resultado"><ol><li>Primeiro item</li><li>Segundo item</li><li>Terceiro item</li></ol></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>- Primeiro item
+- Segundo item
+- Terceiro item</code></pre></td>
+        <td class="resultado" data-l="Resultado"><ul><li>Primeiro item</li><li>Segundo item</li><li>Terceiro item</li></ul></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>* Primeiro item
+* Segundo item
+* Terceiro item</code></pre></td>
+        <td class="resultado" data-l="Resultado"><ul><li>Primeiro item</li><li>Segundo item</li><li>Terceiro item</li></ul></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>+ Primeiro item
++ Segundo item
++ Terceiro item</code></pre></td>
+        <td class="resultado" data-l="Resultado"><ul><li>Primeiro item</li><li>Segundo item</li><li>Terceiro item</li></ul></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>- Primeiro item
+- Segundo item
+    - Item aninhado
+    - Outro item aninhado
+- Terceiro item</code></pre></td>
+        <td class="resultado" data-l="Resultado"><ul><li>Primeiro item</li><li>Segundo item<ul><li>Item aninhado</li><li>Outro item aninhado</li></ul></li><li>Terceiro item</li></ul></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Item que começa com número</h3>
+  <p>Se um item de lista começar com um número seguido de ponto (como um ano), o Markdown pode entender que é uma lista ordenada. Para evitar isso, coloque uma barra invertida <code>\</code> antes do ponto.</p>
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>- 1995\. O ano em que o filme chegou aos cinemas.
+- Depois vieram as continuações.</code></pre></td>
+      <td class="resultado" data-l="Resultado"><ul><li>1995. O ano em que o filme chegou aos cinemas.</li><li>Depois vieram as continuações.</li></ul></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <h3>Outros elementos dentro de listas</h3>
+  <p>Para colocar um parágrafo, uma citação, um bloco de código, uma imagem ou outra lista <strong>dentro de um item</strong>, deixe uma linha em branco e recue o elemento com 4 espaços. O bloco de código precisa de 8 espaços (o recuo do item mais o recuo do código).</p>
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>- Item com um parágrafo:
+
+    Este parágrafo pertence ao item.
+
+- Item com uma citação:
+
+    &gt; Ao infinito e além!
+
+- Item com um bloco de código:
+
+        ficha_tecnica.txt
+
+- Item com uma imagem:
+
+    ![Tux, o mascote do Linux](https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/200px-Tux.svg.png)
+
+- Item com uma lista aninhada:
+    - Woody
+    - Buzz</code></pre></td>
+      <td class="resultado" data-l="Resultado">
+        <ul>
+          <li><p>Item com um parágrafo:</p><p>Este parágrafo pertence ao item.</p></li>
+          <li><p>Item com uma citação:</p><blockquote><p>Ao infinito e além!</p></blockquote></li>
+          <li><p>Item com um bloco de código:</p><pre><code>ficha_tecnica.txt</code></pre></li>
+          <li><p>Item com uma imagem:</p><p><svg width="120" height="72" viewBox="0 0 120 72" role="img" aria-label="Imagem de exemplo (Tux, o mascote do Linux)"><rect width="120" height="72" fill="#dbe8f0"/><circle cx="34" cy="26" r="9" fill="#f3c969"/><path d="M0 72 L40 34 L68 58 L88 42 L120 72Z" fill="#2d7dab"/></svg></p></li>
+          <li><p>Item com uma lista aninhada:</p><ul><li>Woody</li><li>Buzz</li></ul></li>
+        </ul>
+      </td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Escreva uma <strong>lista ordenada</strong> com os principais acontecimentos da história (ou com os seus 3 momentos favoritos, em ordem), sem contar o final.</li>
+      <li>Escreva uma <strong>lista não ordenada</strong> com os personagens principais e inclua pelo menos <strong>um item aninhado</strong> (por exemplo, uma característica do personagem).</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida (troque pelo conteúdo da sua obra):</p>
+<pre><code>Meus 3 momentos favoritos:
+
+1. A chegada do Buzz ao quarto do Andy
+2. A viagem até a pizzaria Pizza Planet
+3. A fuga da casa do Sid
+
+Personagens principais:
+
+- Woody
+    - Xerife e líder dos brinquedos
+- Buzz Lightyear
+    - Acha que é um patrulheiro espacial de verdade
+- Rex</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 7 ===================== -->
+  <h2 id="codigo">7. Código</h2>
+  <p>O recurso de código serve para mostrar <strong>trechos de programação</strong> ou textos que precisam aparecer exatamente como foram digitados, em fonte monoespaçada (em que todas as letras têm a mesma largura). Aqui, você vai praticar a sintaxe com exemplos do seu tema. Para código <strong>em linha</strong>, coloque o texto entre crases (<code>`</code>). Se o texto tiver uma crase dentro, use crases duplas nas pontas. Um <strong>bloco de código</strong> pode ser criado recuando cada linha com 4 espaços ou 1 <kbd>Tab</kbd>.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>Salve o texto no arquivo `resenha.md`.</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Salve o texto no arquivo <code>resenha.md</code>.</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>`` Use `código` entre crases. ``</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p><code>Use `código` entre crases.</code></p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>Ficha técnica:
+
+    Título: Toy Story
+    Direção: John Lasseter
+    Ano: 1995</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Ficha técnica:</p><pre><code>Título: Toy Story
+Direção: John Lasseter
+Ano: 1995</code></pre></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    No bloco de código, deixe uma linha em branco antes das linhas recuadas. Sem ela, o texto recuado pode continuar o parágrafo anterior em vez de virar código.
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Escreva, em <strong>código em linha</strong>, o nome do arquivo em que você salvaria esta resenha (por exemplo, <code>minha_indicacao.md</code>).</li>
+      <li>Crie um <strong>bloco de código por indentação</strong> com uma “ficha técnica” da obra: título, autor ou diretor e ano.</li>
+      <li>Confira se o bloco apareceu em fonte monoespaçada.</li>
+    </ol>
+    <p>Exemplo de partida:</p>
+<pre><code>Vou salvar este texto no arquivo `minha_indicacao.md`.
+
+Ficha técnica:
+
+    Título: Toy Story
+    Direção: John Lasseter
+    Ano: 1995</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 8 ===================== -->
+  <h2 id="linhas">8. Linhas horizontais</h2>
+  <p>A linha horizontal separa partes do texto. Para criá-la, digite, em uma linha sozinha, três ou mais asteriscos (<code>***</code>), hifens (<code>---</code>) ou sublinhados (<code>___</code>). O resultado é o mesmo nos três casos.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Texto acima.
+
+***
+
+Texto no meio.
+
+---
+
+Texto no meio.
+
+_________________
+
+Texto abaixo.</code></pre></td>
+      <td class="resultado" data-l="Resultado"><p>Texto acima.</p><hr><p>Texto no meio.</p><hr><p>Texto no meio.</p><hr><p>Texto abaixo.</p></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Coloque uma <strong>linha horizontal</strong> para separar a parte da sinopse da parte da sua opinião pessoal.</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida (a linha em branco antes e depois é importante):</p>
+<pre><code>Fim da sinopse.
+
+---
+
+Agora começa a minha opinião.</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 9 ===================== -->
+  <h2 id="links">9. Links</h2>
+  <p>Um link leva o leitor a outra página. A sintaxe é <code>[texto do link](endereço)</code>: o texto fica entre colchetes e o endereço (URL) entre parênteses. Você pode acrescentar um <strong>título</strong> entre aspas depois do endereço, que aparece como dica quando o mouse passa sobre o link. Para transformar um endereço ou um e-mail em link, coloque-o entre <code>&lt;</code> e <code>&gt;</code>. Também é possível usar ênfase e código dentro do texto do link.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>Veja a página do filme na [Wikipédia](https://pt.wikipedia.org/wiki/Toy_Story).</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Veja a página do filme na <a href="https://pt.wikipedia.org/wiki/Toy_Story" target="_blank" rel="noopener">Wikipédia</a>.</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>[Wikipédia](https://pt.wikipedia.org/wiki/Toy_Story "Página de Toy Story")</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p><a href="https://pt.wikipedia.org/wiki/Toy_Story" title="Página de Toy Story" target="_blank" rel="noopener">Wikipédia</a> (passe o mouse sobre o link para ver o título)</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>&lt;https://www.jotbird.com/&gt;
+
+&lt;aluno@exemplo.com&gt;</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p><a href="https://www.jotbird.com/" target="_blank" rel="noopener">https://www.jotbird.com/</a></p><p><a href="mailto:aluno@exemplo.com">aluno@exemplo.com</a></p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>Leia na **[Wikipédia](https://pt.wikipedia.org/wiki/Toy_Story)**.
+
+Veja o arquivo [`resenha.md`](https://pt.wikipedia.org/wiki/Toy_Story).</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Leia na <strong><a href="https://pt.wikipedia.org/wiki/Toy_Story" target="_blank" rel="noopener">Wikipédia</a></strong>.</p><p>Veja o arquivo <a href="https://pt.wikipedia.org/wiki/Toy_Story" target="_blank" rel="noopener"><code>resenha.md</code></a>.</p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Links por referência</h3>
+  <p>No link por referência, você escreve no texto <code>[texto][rótulo]</code> e define o endereço em outro lugar do documento, com <code>[rótulo]: endereço "título"</code>. Isso deixa o texto mais limpo quando o endereço é muito longo. A linha com a definição do rótulo não aparece no resultado.</p>
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Mais informações no [IMDb][imdb].
+
+[imdb]: https://www.imdb.com/title/tt0114709/ "Toy Story no IMDb"</code></pre></td>
+      <td class="resultado" data-l="Resultado"><p>Mais informações no <a href="https://www.imdb.com/title/tt0114709/" title="Toy Story no IMDb" target="_blank" rel="noopener">IMDb</a>.</p></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Crie um <strong>link</strong> para uma página sobre a sua obra (site oficial, trailer, página do livro ou da editora).</li>
+      <li>Inclua o <strong>seu e-mail entre <code>&lt;&gt;</code></strong>, como “contato para trocar indicações”.</li>
+      <li>Crie um <strong>segundo link</strong> para outra página sobre a obra e escreva-o como <strong>link por referência</strong>.</li>
+      <li>Confira se todos os links aparecem na pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida (use a sua obra e o seu e-mail):</p>
+<pre><code>Saiba mais na [página do filme](https://pt.wikipedia.org/wiki/Toy_Story).
+
+Contato para trocar indicações: &lt;aluno@exemplo.com&gt;
+
+Outra página sobre a obra: [IMDb][imdb].
+
+[imdb]: https://www.imdb.com/title/tt0114709/</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 10 ===================== -->
+  <h2 id="imagens">10. Imagens</h2>
+  <p>A sintaxe da imagem é parecida com a do link, mas começa com um ponto de exclamação: <code>![texto alternativo](endereço-da-imagem "título")</code>. O <strong>texto alternativo</strong> descreve a imagem em palavras. Ele aparece se a imagem não carregar e é lido por leitores de tela, programas que ajudam pessoas com deficiência visual a usar o computador. Por isso, é importante escrevê-lo sempre. O título (entre aspas) é opcional.</p>
+  <p>Para usar uma imagem, você precisa do <strong>endereço (URL) de uma imagem já publicada na internet</strong>. Na página onde a imagem está, clique nela com o <strong>botão direito do mouse</strong> e escolha <strong>“Copiar endereço da imagem”</strong>. Para que a imagem seja também um link, coloque a sintaxe da imagem dentro dos colchetes de um link.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>![Tux, o mascote do Linux](https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/200px-Tux.svg.png "Tux, mascote do Linux")</code></pre></td>
+        <td class="resultado" data-l="Resultado"><svg width="120" height="72" viewBox="0 0 120 72" role="img" aria-label="Imagem de exemplo (Tux, o mascote do Linux)"><title>Tux, mascote do Linux</title><rect width="120" height="72" fill="#dbe8f0"/><circle cx="34" cy="26" r="9" fill="#f3c969"/><path d="M0 72 L40 34 L68 58 L88 42 L120 72Z" fill="#2d7dab"/></svg><p><em>(Nesta página, um desenho representa a imagem. No JotBird, você verá a imagem de verdade.)</em></p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>[![Tux, o mascote do Linux](https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/200px-Tux.svg.png)](https://pt.wikipedia.org/wiki/Tux)</code></pre></td>
+        <td class="resultado" data-l="Resultado"><a href="https://pt.wikipedia.org/wiki/Tux" target="_blank" rel="noopener"><svg width="120" height="72" viewBox="0 0 120 72" role="img" aria-label="Imagem de exemplo clicável (Tux, o mascote do Linux)"><rect width="120" height="72" fill="#dbe8f0"/><circle cx="34" cy="26" r="9" fill="#f3c969"/><path d="M0 72 L40 34 L68 58 L88 42 L120 72Z" fill="#2d7dab"/></svg></a><p><em>(A imagem é um link: ao clicar, abre outra página.)</em></p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Insira a <strong>capa do livro</strong> ou o <strong>cartaz do filme</strong>, com um bom texto alternativo (por exemplo, “Cartaz do filme Toy Story”).</li>
+      <li>Depois, transforme-a em <strong>imagem clicável</strong>, que leva à página que você escolheu na seção anterior.</li>
+      <li>Confira a pré-visualização e clique na imagem para testar.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 11 ===================== -->
+  <h2 id="escape">11. Caracteres de escape</h2>
+  <p>Alguns símbolos têm função especial no Markdown, como <code>*</code> e <code>#</code>. Para mostrar um deles <strong>literalmente</strong>, sem virar formatação, coloque uma <strong>barra invertida</strong> <code>\</code> antes do símbolo. Essa barra é chamada de “caractere de escape”.</p>
+
+  <p>Estes são os caracteres que podem ser escapados:</p>
+  <div class="rolagem">
+  <table>
+    <tr><th>Caractere</th><th>Nome</th><th>Caractere</th><th>Nome</th></tr>
+    <tr><td><code>\</code></td><td>barra invertida</td><td><code>(</code> <code>)</code></td><td>parênteses</td></tr>
+    <tr><td><code>`</code></td><td>crase</td><td><code>#</code></td><td>jogo da velha</td></tr>
+    <tr><td><code>*</code></td><td>asterisco</td><td><code>+</code></td><td>sinal de mais</td></tr>
+    <tr><td><code>_</code></td><td>sublinhado</td><td><code>-</code></td><td>hífen</td></tr>
+    <tr><td><code>{</code> <code>}</code></td><td>chaves</td><td><code>.</code></td><td>ponto</td></tr>
+    <tr><td><code>[</code> <code>]</code></td><td>colchetes</td><td><code>!</code></td><td>ponto de exclamação</td></tr>
+    <tr><td><code>&lt;</code> <code>&gt;</code></td><td>sinais de menor e maior</td><td><code>|</code></td><td>barra vertical</td></tr>
+  </table>
+  </div>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>\*Toy Story\*</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>*Toy Story*</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>*Toy Story*</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p><em>Toy Story</em></p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>\#1 dos meus favoritos
+
+\[Toy Story\] é o nome do filme.</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>#1 dos meus favoritos</p><p>[Toy Story] é o nome do filme.</p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Escreva uma frase que mostre <strong>literalmente</strong> um asterisco, um <code>#</code> ou colchetes, sem que eles virem formatação.</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida:</p>
+<pre><code>Nota: 10\*/10
+
+\#1 dos meus favoritos</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 12 ===================== -->
+  <h2 id="tabelas">12. Tabelas</h2>
+  <p>Uma tabela organiza informações em linhas e colunas. Você separa as colunas com barras verticais (<code>|</code>) e, na segunda linha, escreve hifens (<code>---</code>) para marcar o cabeçalho. Para <strong>alinhar</strong> uma coluna, use dois-pontos na linha dos hifens: <code>:---</code> alinha à esquerda, <code>:---:</code> centraliza e <code>---:</code> alinha à direita.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>| Critério    | Nota |
+| ----------- | ---- |
+| História    | 10   |
+| Personagens | 9    |</code></pre></td>
+        <td class="resultado" data-l="Resultado"><table><tr><th>Critério</th><th>Nota</th></tr><tr><td>História</td><td>10</td></tr><tr><td>Personagens</td><td>9</td></tr></table></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>| Critério    | Comentário | Nota |
+| :---        |   :---:    | ---: |
+| História    | Divertida  | 10   |
+| Personagens | Marcantes  | 9    |</code></pre></td>
+        <td class="resultado" data-l="Resultado"><table><tr><th style="text-align:left">Critério</th><th style="text-align:center">Comentário</th><th style="text-align:right">Nota</th></tr><tr><td style="text-align:left">História</td><td style="text-align:center">Divertida</td><td style="text-align:right">10</td></tr><tr><td style="text-align:left">Personagens</td><td style="text-align:center">Marcantes</td><td style="text-align:right">9</td></tr></table></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Crie uma <strong>tabela de notas</strong> da obra (por exemplo: história, personagens, ambientação ou trilha sonora, final, com nota de 0 a 10) <strong>ou</strong> uma tabela de personagens e seus papéis.</li>
+      <li>Alinhe pelo menos <strong>uma coluna</strong> de forma diferente das outras (por exemplo, as notas à direita).</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+    <p>Exemplo de partida (dê as suas notas e escolha os seus critérios):</p>
+<pre><code>| Critério    | Nota |
+| :---------- | ---: |
+| História    | 10   |
+| Personagens | 9    |
+| Ambientação | 9    |
+| Final       | 10   |</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 13 ===================== -->
+  <h2 id="rodape">13. Notas de rodapé</h2>
+  <p>Uma nota de rodapé acrescenta uma informação extra sem interromper o texto. No ponto onde a nota deve aparecer, escreva <code>[^1]</code>. Em outro lugar do documento, em uma linha própria, escreva a nota: <code>[^1]: texto da nota</code>. O programa numera as notas e as mostra no final da página. O identificador pode ser um número ou uma palavra, mas não pode ter espaços.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Toy Story foi o primeiro longa-metragem totalmente animado por computador.[^1]
+
+[^1]: Curiosidade: o filme foi lançado em 1995 pelos estúdios Pixar.</code></pre></td>
+      <td class="resultado" data-l="Resultado"><p>Toy Story foi o primeiro longa-metragem totalmente animado por computador.<sup>1</sup></p><div class="notas-rodape"><sup>1</sup> Curiosidade: o filme foi lançado em 1995 pelos estúdios Pixar.</div></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Escolha uma frase do seu texto e acrescente uma <strong>nota de rodapé</strong> com uma curiosidade ou com a fonte de uma informação sobre a obra.</li>
+      <li>Coloque a definição da nota (<code>[^1]: ...</code>) no <strong>fim do documento</strong>, em uma linha separada.</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 14 ===================== -->
+  <h2 id="ids">14. IDs de títulos (Heading IDs)</h2>
+  <p>Um <strong>ID</strong> é um nome que identifica um título. Para dar um ID ao título, escreva o nome entre chaves, com <code>#</code> na frente, no fim da linha: <code>### Título {#meu-id}</code>. Depois, você pode criar um link que leva direto ao título, com <code>[texto](#meu-id)</code>. É assim que se monta um sumário com links.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>[Ir para "Sobre a obra"](#sobre)
+
+### Sobre a obra {#sobre}</code></pre></td>
+      <td class="resultado" data-l="Resultado"><p><a href="#sobre-demo">Ir para "Sobre a obra"</a></p><div class="hd hd3" id="sobre-demo" style="scroll-margin-top:72px">Sobre a obra</div></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Acrescente um ID aos seus dois subtítulos (por exemplo, <code>{#sobre}</code> e <code>{#porque}</code>). Use IDs curtos, sem espaços e sem acentos.</li>
+      <li>No início do texto, logo abaixo da ficha da obra, crie um pequeno <strong>sumário</strong> com links para os dois títulos.</li>
+      <li>Clique nos links da pré-visualização e observe se funcionaram.</li>
+    </ol>
+    <p>Exemplo de partida:</p>
+<pre><code>## Sumário
+
+- [Sobre a obra](#sobre)
+- [Por que eu gosto](#porque)
+
+## Sobre a obra {#sobre}
+
+## Por que eu gosto {#porque}</code></pre>
+  </div>
+
+  <!-- ===================== SEÇÃO 15 ===================== -->
+  <h2 id="listas-definicao">15. Listas de definição</h2>
+  <p>Uma lista de definição explica termos, como um pequeno dicionário. Escreva o termo em uma linha e, na linha seguinte, dois-pontos, um espaço e a definição. Um termo pode ter mais de uma definição.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Woody
+: Xerife e brinquedo favorito de Andy.
+
+Buzz Lightyear
+: Boneco de patrulheiro espacial.
+: Acha que é um herói de verdade.</code></pre></td>
+      <td class="resultado" data-l="Resultado"><dl><dt>Woody</dt><dd>Xerife e brinquedo favorito de Andy.</dd><dt>Buzz Lightyear</dt><dd>Boneco de patrulheiro espacial.</dd><dd>Acha que é um herói de verdade.</dd></dl></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Defina <strong>2 ou 3 termos</strong> do universo da sua obra (um personagem, um lugar, um objeto ou uma expressão característica).</li>
+      <li>Confira a pré-visualização e anote se funcionou.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 16 ===================== -->
+  <h2 id="tachado">16. Tachado</h2>
+  <p>O tachado desenha um risco sobre o texto e serve para mostrar algo que foi corrigido ou que já não vale. Coloque <code>~~</code> (dois til) antes e depois do trecho.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>~~Animação é só para criança.~~ Animação também emociona os adultos.</code></pre></td>
+      <td class="resultado" data-l="Resultado"><p><del>Animação é só para criança.</del> Animação também emociona os adultos.</p></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Risque uma <strong>opinião ou previsão</strong> que você tinha antes de ler ou assistir e que mudou depois.</li>
+      <li>Escreva a opinião correta ao lado e confira a pré-visualização.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 17 ===================== -->
+  <h2 id="tarefas">17. Listas de tarefas</h2>
+  <p>Uma lista de tarefas é um checklist, uma lista com caixinhas para marcar. Escreva cada item como uma lista com hífen, seguida de colchetes: <code>- [ ]</code> para um item ainda não feito e <code>- [x]</code> (com um <code>x</code> dentro) para um item marcado.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>- [x] Toy Story
+- [ ] Toy Story 2
+- [ ] Toy Story 3
+- [ ] Toy Story 4</code></pre></td>
+      <td class="resultado" data-l="Resultado"><ul style="list-style:none; padding-left:0;"><li><input type="checkbox" checked disabled> Toy Story</li><li><input type="checkbox" disabled> Toy Story 2</li><li><input type="checkbox" disabled> Toy Story 3</li><li><input type="checkbox" disabled> Toy Story 4</li></ul></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Crie um <strong>checklist</strong> com outras obras do mesmo autor ou diretor, ou da mesma saga.</li>
+      <li>Marque com <code>[x]</code> as que você já leu ou assistiu e deixe as demais como “quero ler/assistir”.</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 18 ===================== -->
+  <h2 id="emoji">18. Emoji</h2>
+  <p>Emojis são pequenos desenhos que expressam ideias e emoções. Há duas formas de usá-los no Markdown. A primeira é <strong>copiar e colar</strong> o emoji direto no texto (em sites como o Emojipedia ou no teclado do celular; no Windows, a tecla Windows + ponto abre um painel de emojis). A segunda é digitar o <strong>código do emoji</strong> (<em>shortcode</em>), que é o nome dele entre dois-pontos.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>Adorei o filme! 😀</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Adorei o filme! 😀</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>Adorei o filme! :joy:</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Adorei o filme! 😂</p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Inclua 2 ou 3 emojis que expressem o que a obra faz você sentir: pelo menos um <strong>copiado e colado</strong> e pelo menos um pelo <strong>código</strong> (por exemplo, <code>:smile:</code>).</li>
+      <li>Observe qual método funcionou na pré-visualização.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 19 ===================== -->
+  <h2 id="destaque">19. Destaque (Highlight)</h2>
+  <p>O destaque funciona como um marca-texto: deixa o trecho com fundo colorido. Coloque <code>==</code> (dois sinais de igual) antes e depois do texto.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody><tr>
+      <td data-l="Você digita"><pre><code>Eu recomendo ==muito== esse filme.</code></pre></td>
+      <td class="resultado" data-l="Resultado"><p>Eu recomendo <mark>muito</mark> esse filme.</p></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Destaque a <strong>frase que resume a sua recomendação</strong>.</li>
+      <li>Confira a pré-visualização.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 20 ===================== -->
+  <h2 id="subscrito">20. Subscrito</h2>
+  <p>O subscrito escreve um caractere pequeno, abaixo da linha do texto, como o 2 em H₂O. Coloque um <code>~</code> (til) antes e depois do trecho.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>H~2~O</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>H<sub>2</sub>O</p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>Toy Story~1~ e Toy Story~2~</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Toy Story<sub>1</sub> e Toy Story<sub>2</sub></p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Escreva um exemplo relacionado à obra com subscrito, como <code>Livro~1~</code>, <code>Parte~2~</code> de uma saga ou <code>Nota~pessoal~: 10</code>.</li>
+      <li>Observe o resultado na pré-visualização.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== SEÇÃO 21 ===================== -->
+  <h2 id="sobrescrito">21. Sobrescrito</h2>
+  <p>O sobrescrito escreve um caractere pequeno, acima da linha do texto, como o 2 em X². Coloque um <code>^</code> (acento circunflexo) antes e depois do trecho.</p>
+
+  <div class="rolagem">
+  <table class="demo">
+    <thead><tr><th>Você digita</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Você digita"><pre><code>X^2^</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>X<sup>2</sup></p></td>
+      </tr>
+      <tr>
+        <td data-l="Você digita"><pre><code>Meu 1^o^ lugar entre os filmes favoritos</code></pre></td>
+        <td class="resultado" data-l="Resultado"><p>Meu 1<sup>o</sup> lugar entre os filmes favoritos</p></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+
+  <div class="caixa pratique">
+    <strong class="rotulo">Pratique no JotBird</strong>
+    <ol>
+      <li>Escreva um exemplo relacionado à obra com sobrescrito, como <code>1^o^ lugar</code> entre os seus favoritos ou <code>2^a^ temporada</code>.</li>
+      <li>Observe o resultado na pré-visualização.</li>
+    </ol>
+  </div>
+
+  <footer id="creditos">
+    <h2>Créditos e referências</h2>
+    <p>Conteúdo adaptado e traduzido do Markdown Guide:</p>
+    <ul>
+      <li><a href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener">https://www.markdownguide.org/basic-syntax/</a></li>
+      <li><a href="https://www.markdownguide.org/extended-syntax/" target="_blank" rel="noopener">https://www.markdownguide.org/extended-syntax/</a></li>
+    </ul>
+    <p>Ferramenta usada nas atividades: <a href="https://www.jotbird.com/" target="_blank" rel="noopener">https://www.jotbird.com/</a></p>
+    <p>Disciplina Softwares, Aplicativos e Sistemas Operacionais — Curso Técnico em Informática integrado ao Ensino Médio.</p>
+  </footer>
+
+</main>
+</div>
+</body>
+</html>
