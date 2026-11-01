@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório: Formatação de Texto no Google Docs</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+    --win: #2d7dab;
+    --lin: #b5651d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:270px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-290px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0;}
+  nav.sumario ol{padding-left:18px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:860px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa.atencao{border-left-color:#c0392b; background:#fdecea;}
+  .caixa.checkpoint{border-left-color:#1b4b6b; background:#eaf1f7;}
+  .caixa.conceito{border-left-color:#2e8b57; background:#eef7f0;}
+  .caixa.comando{border-left-color:#5a6a75; background:#f2f4f6;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  figure{margin:22px 0; text-align:center;}
+  figure svg{max-width:100%; height:auto; border:1px solid var(--borda); border-radius:6px; background:#fff; padding:10px;}
+  figcaption{font-size:0.88em; color:#5a6a75; margin-top:8px; font-style:italic;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  pre{
+    background:#20303c; color:#e8f0f5; padding:14px 16px; border-radius:6px;
+    overflow-x:auto; font-family: Consolas, "Courier New", monospace; font-size:0.9em;
+    margin:14px 0;
+  }
+  pre code{background:none; padding:0; color:inherit;}
+  ul, ol{margin:10px 0; padding-left:24px;}
+  .trilha{
+    border-radius:8px; padding:2px 22px 22px 22px; margin:30px 0;
+  }
+  .trilha-win{background:#eef6fb; border:2px solid var(--win);}
+  .trilha-lin{background:#fbf3ea; border:2px solid var(--lin);}
+  .trilha h2{margin-top:20px;}
+  .trilha-win h2{color:var(--win); border-bottom-color:var(--win);}
+  .trilha-lin h2{color:var(--lin); border-bottom-color:var(--lin);}
+  .selo{
+    display:inline-block; color:#fff; font-size:0.75em; font-weight:600;
+    padding:3px 10px; border-radius:12px; letter-spacing:.03em; text-transform:uppercase;
+    margin-left:8px; vertical-align:middle;
+  }
+  .selo-win{background:var(--win);}
+  .selo-lin{background:var(--lin);}
+  .passo{
+    display:flex; gap:14px; margin:16px 0; align-items:flex-start;
+    background:#fff; border:1px solid var(--borda); border-radius:6px; padding:12px 16px;
+  }
+  .passo .num{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    background:var(--azul); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:0.95em;
+  }
+  .trilha-win .passo .num{background:var(--win);}
+  .trilha-lin .passo .num{background:var(--lin);}
+  .passo .conteudo{flex:1;}
+  .passo .conteudo p:first-child{margin-top:0;}
+  .passo .conteudo p:last-child{margin-bottom:0;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#7a8a94;}
+  .relatorio ol > li{margin-bottom:10px;}
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+    .passo{flex-direction:column;}
+  }
+</style>
+<style>
+  .texto-base{
+    background:#fff; border:1px dashed #8aa6b5; border-radius:6px; padding:16px 18px;
+    font-family: Consolas, "Courier New", monospace; font-size:0.88em; white-space:pre-wrap;
+    max-height:420px; overflow-y:auto; margin:10px 0;
+  }
+  .botao-copiar{
+    background:var(--azul-claro); color:#fff; border:none; border-radius:4px;
+    padding:8px 16px; font-size:0.95em; cursor:pointer; font-family:inherit;
+  }
+  .botao-copiar:hover{background:var(--azul);}
+  .aviso-copia{margin-left:10px; color:#2e8b57; font-weight:600;}
+  kbd{
+    font-family: Consolas, "Courier New", monospace; font-size:0.85em;
+    background:#fff; border:1px solid #b9c7d0; border-bottom-width:2px; border-radius:3px; padding:0 5px;
+  }
+  .caminho{font-weight:600; color:var(--azul);}
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle">☰</label>
+  <span class="titulo-topo">Laboratório Prático — Formatação de Texto</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#intro">Antes de começar</a></li>
+    <li><a href="#conceitos">Conceitos-chave da prática</a>
+      <ol>
+        <li><a href="#conc-estilos">Formatação direta x estilos</a></li>
+        <li><a href="#conc-niveis">Caractere, parágrafo e página</a></li>
+      </ol>
+    </li>
+    <li><a href="#texto-base">O texto-base</a></li>
+    <li><a href="#roteiro">Roteiro de formatação</a>
+      <ol>
+        <li><a href="#r-pagina">1. Configurando a página</a></li>
+        <li><a href="#r-fonte">2. Fonte e corpo do texto</a></li>
+        <li><a href="#r-paragrafo">3. Parágrafos</a></li>
+        <li><a href="#r-titulos">4. Títulos com estilos</a></li>
+        <li><a href="#r-destaques">5. Destaques e listas</a></li>
+        <li><a href="#r-tabela">6. Tabela</a></li>
+        <li><a href="#r-imagem">7. Imagem com legenda</a></li>
+        <li><a href="#r-cabecalho">8. Cabeçalho, rodapé e páginas</a></li>
+        <li><a href="#r-sumario">9. Capa e sumário automático</a></li>
+      </ol>
+    </li>
+    <li><a href="#entrega">Entrega</a></li>
+    <li><a href="#avaliacao">Critérios de avaliação</a></li>
+    <li><a href="#relatorio">Perguntas finais</a></li>
+    <li><a href="#creditos">Créditos</a></li>
+  </ol>
+</nav>
+<main>
+  <h1>Laboratório Prático: Formatação de Texto no Google Docs</h1>
+  <p class="subtitulo">Atividade prática de continuação da videoaula — Softwares, Aplicativos e Sistemas Operacionais</p>
+
+  <h2 id="intro">Antes de começar</h2>
+  <p>Depois de assistir à videoaula, chegou a hora de praticar. Você vai receber um <strong>texto sem nenhuma formatação</strong> (só letras, como se tivesse sido digitado no Bloco de Notas) e vai transformá-lo em um documento organizado, legível e com aparência profissional usando o <strong>Google Docs</strong>.</p>
+  <p>O assunto do texto você já conhece: <strong>sistemas operacionais</strong>, conteúdo das nossas aulas anteriores. Assim, você pode se concentrar na formatação, e não em escrever.</p>
+
+  <h2 id="conceitos">Conceitos-chave da prática</h2>
+
+  <h3 id="conc-estilos">Formatação direta x estilos</h3>
+  <p>Existem duas maneiras de deixar um título com letra grande e em negrito:</p>
+  <ul>
+    <li><strong>Formatação direta</strong>: você seleciona o texto e muda, uma por uma, a fonte, o tamanho e o negrito. Funciona, mas o editor não "sabe" que aquilo é um título.</li>
+    <li><strong>Estilo</strong>: você aplica um estilo pronto (por exemplo, <em>Título 1</em>). O editor passa a saber que aquele trecho é um título, e isso permite criar um <strong>sumário automático</strong>, navegar pelo documento e mudar a aparência de todos os títulos de uma vez.</li>
+  </ul>
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    <strong>Estilo</strong> é um conjunto de formatações (fonte, tamanho, cor, espaçamento) com um nome, que pode ser aplicado a qualquer trecho do documento. No Google Docs, os estilos ficam na caixa que normalmente mostra <span class="caminho">Texto normal</span>, à esquerda da caixa de fonte, na barra de ferramentas.
+  </div>
+
+  <h3 id="conc-niveis">Caractere, parágrafo e página</h3>
+  <p>Toda formatação age em um destes três níveis. Saber em qual nível você está ajuda a encontrar a opção certa no menu.</p>
+  <table>
+    <tr><th>Nível</th><th>O que muda</th><th>Exemplos</th></tr>
+    <tr><td>Caractere</td><td>Só as letras selecionadas</td><td>Fonte, tamanho, negrito, itálico, sublinhado, cor</td></tr>
+    <tr><td>Parágrafo</td><td>O parágrafo inteiro, mesmo que só um pedaço esteja selecionado</td><td>Alinhamento, espaçamento entre linhas, recuo, listas, estilos de título</td></tr>
+    <tr><td>Página / documento</td><td>O documento inteiro</td><td>Margens, tamanho do papel, orientação, cabeçalho, rodapé, número de página</td></tr>
+  </table>
+
+  <div class="caixa conceito">
+    <strong class="rotulo">Atalhos que você vai usar o tempo todo</strong>
+    <kbd>Ctrl</kbd>+<kbd>A</kbd> seleciona tudo · <kbd>Ctrl</kbd>+<kbd>Z</kbd> desfaz · <kbd>Ctrl</kbd>+<kbd>B</kbd> negrito · <kbd>Ctrl</kbd>+<kbd>I</kbd> itálico · <kbd>Ctrl</kbd>+<kbd>U</kbd> sublinhado · <kbd>Ctrl</kbd>+<kbd>\</kbd> limpa a formatação do trecho selecionado.
+  </div>
+
+  <h2 id="texto-base">O texto-base</h2>
+  <div class="passo">
+    <div class="num">1</div>
+    <div class="conteudo">
+      <p>Acesse <a href="https://docs.google.com" target="_blank" rel="noopener">docs.google.com</a> e crie um <strong>documento em branco</strong>. Clique em "Documento sem título", no canto superior esquerdo, e renomeie para <code>Formatacao_SeuNome</code>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">2</div>
+    <div class="conteudo">
+      <p>Clique no botão abaixo para copiar o texto-base. No Google Docs, cole <strong>sem formatação</strong> com <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>, para começar do zero.</p>
+      <p><button class="botao-copiar" onclick="copiarTexto()">📋 Copiar texto-base</button><span id="aviso" class="aviso-copia"></span></p>
+    </div>
+  </div>
+
+<div class="texto-base" id="conteudo-texto">Sistemas Operacionais: o software que dá vida ao computador
+Trabalho prático de formatação de texto
+Introdução
+Quando ligamos um computador ou um celular, a primeira coisa que entra em funcionamento, logo depois do hardware, é o sistema operacional. Ele é o programa responsável por gerenciar os recursos da máquina e por oferecer um ambiente onde os outros programas, como navegadores, jogos e editores de texto, podem ser executados.
+Sem um sistema operacional, cada aplicativo precisaria saber, sozinho, como conversar com o processador, a memória, o disco e cada um dos dispositivos conectados. O sistema operacional esconde essa complexidade e oferece ao usuário e aos programas uma forma mais simples e padronizada de usar o computador.
+Funções de um sistema operacional
+Segundo Maziero, um sistema operacional tem dois objetivos principais: abstrair o hardware, oferecendo interfaces mais simples para os programas, e gerenciar os recursos do computador, distribuindo-os de forma justa e eficiente entre os programas em execução. Na prática, isso se traduz em algumas funções básicas:
+Gerência do processador: decide qual programa usa o processador e por quanto tempo.
+Gerência de memória: reserva uma área da memória para cada programa e impede que um invada a área do outro.
+Gerência de dispositivos: controla o acesso a teclado, mouse, impressora, rede e outros periféricos.
+Gerência de arquivos: organiza os dados em arquivos e diretórios dentro dos dispositivos de armazenamento.
+Gerência de proteção: define quem pode acessar cada recurso e registra o uso do sistema.
+Exemplos de sistemas operacionais
+Existem sistemas operacionais para os mais diversos tipos de equipamento. A tabela a seguir apresenta alguns exemplos conhecidos.
+Sistema | Desenvolvedor | Licença | Uso mais comum
+Windows | Microsoft | Proprietária | Computadores pessoais
+Linux (Debian, Ubuntu) | Comunidade | Livre | Servidores e computadores pessoais
+macOS | Apple | Proprietária | Computadores da Apple
+Android | Google | Livre (base) | Celulares e tablets
+iOS | Apple | Proprietária | iPhones
+Processos
+Um programa é um arquivo guardado no disco, com instruções que ainda não estão sendo executadas. Quando o usuário abre esse programa, o sistema operacional o carrega na memória e cria um processo, que é o programa em execução, junto com todas as informações de que ele precisa para funcionar.
+Um mesmo programa pode dar origem a vários processos. Por exemplo, ao abrir duas janelas independentes de um editor de texto, podemos ter dois processos diferentes criados a partir do mesmo programa. Para acompanhar os processos ativos, o Windows oferece o Gerenciador de Tarefas, enquanto no Linux podemos usar o Monitor do Sistema ou comandos como ps e top no terminal.
+Ao longo da sua vida, um processo passa por diferentes estados:
+Novo: o processo está sendo criado.
+Pronto: o processo aguarda a sua vez de usar o processador.
+Executando: o processo está usando o processador.
+Suspenso: o processo aguarda algum evento, como a leitura de um arquivo.
+Terminado: o processo encerrou a sua execução.
+Conclusão
+O sistema operacional trabalha o tempo todo, mesmo quando não percebemos. Entender suas funções ajuda a usar o computador de forma mais consciente: saber por que um programa trava, por que o computador fica lento com muitas janelas abertas ou como os arquivos são organizados no disco.
+Referência
+MAZIERO, Carlos A. Sistemas Operacionais: Conceitos e Mecanismos. Curitiba: DINF/UFPR, 2019.</div>
+
+  <div class="caixa observacao">
+    <strong class="rotulo">Observação</strong>
+    Repare que no texto-base não há negrito, títulos ou listas. As linhas com o sinal <code>|</code> são os dados de uma tabela que você vai montar na Parte 6. 
+  </div>
+
+  <div class="caixa exemplo">
+    <strong class="rotulo">Modelo do resultado</strong>
+    Veja como o documento deve ficar ao final: <a href="modelo_texto_formatado.pdf" target="_blank" rel="noopener">modelo_texto_formatado.pdf</a>. A imagem do seu trabalho pode ser diferente da Figura 1 do modelo.
+  </div>
+
+  <h2 id="roteiro">Roteiro de formatação</h2>
+  <p>Siga as partes na ordem.</p>
+
+  <h3 id="r-pagina">1. Configurando a página</h3>
+  <div class="passo">
+    <div class="num">3</div>
+    <div class="conteudo">
+      <p>Abra <span class="caminho">Arquivo → Configuração da página</span>. Confira se o tamanho do papel é <strong>A4</strong> e a orientação é <strong>Retrato</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">4</div>
+    <div class="conteudo">
+      <p>Ajuste as margens para: <strong>superior 3 cm</strong>, <strong>esquerda 3 cm</strong>, <strong>inferior 2 cm</strong> e <strong>direita 2 cm</strong>. Essas são as margens recomendadas pela Associação Brasileira de Normas Técnicas (ABNT) para trabalhos acadêmicos. A ABNT é o órgão privado e sem fins lucrativos responsável por normatizar trabalhos técnicos e acadêmicos no Brasil. Clique em <strong>OK</strong>.</p>
+    </div>
+  </div>
+
+
+  <h3 id="r-fonte">2. Fonte e corpo do texto</h3>
+  <div class="passo">
+    <div class="num">5</div>
+    <div class="conteudo">
+      <p>Selecione todo o texto com <kbd>Ctrl</kbd>+<kbd>A</kbd>. Na barra de ferramentas, escolha a fonte <strong>Arial</strong> e o tamanho <strong>12</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">6</div>
+    <div class="conteudo">
+      <p>Com o texto ainda selecionado, confira se a cor do texto (ícone <strong>A</strong> sublinhado) está em <strong>preto</strong>.</p>
+    </div>
+  </div>
+
+
+  <h3 id="r-paragrafo">3. Parágrafos</h3>
+  <div class="passo">
+    <div class="num">7</div>
+    <div class="conteudo">
+      <p>Com todo o texto selecionado, abra <span class="caminho">Formatar → Espaçamento entre linhas e parágrafos</span> e escolha <strong>1,5</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">8</div>
+    <div class="conteudo">
+      <p>Ainda com tudo selecionado, aplique o alinhamento <strong>justificado</strong> (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>J</kbd>). Repare que as linhas passam a terminar alinhadas tanto à esquerda quanto à direita.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">9</div>
+    <div class="conteudo">
+      <p>Selecione apenas os <strong>parágrafos de texto corrido</strong> (não os títulos nem os itens de lista). Abra <span class="caminho">Formatar → Alinhar e recuar → Opções de recuo</span>. Em <strong>Recuo especial</strong>, escolha <strong>Primeira linha</strong> e digite <strong>1,25 cm</strong>.</p>
+    </div>
+  </div>
+  <div class="caixa observacao">
+    <strong class="rotulo">Dica: pincel de formatação</strong>
+    Formatou um parágrafo e quer repetir a mesma formatação em outro? Clique no parágrafo pronto, depois no ícone de <strong>rolo de pintura</strong> (Copiar formatação) na barra de ferramentas e, em seguida, clique no parágrafo de destino. Clicando duas vezes no rolo, ele fica ativo para vários parágrafos.
+  </div>
+
+
+  <h3 id="r-titulos">4. Títulos com estilos</h3>
+  <p>Agora você vai dizer ao Google Docs quais linhas são títulos. Use os <strong>estilos</strong>, e não a formatação direta (reveja os <a href="#conc-estilos">conceitos</a>).</p>
+  <div class="passo">
+    <div class="num">10</div>
+    <div class="conteudo">
+      <p>Clique na primeira linha (<em>Sistemas Operacionais: o software que dá vida ao computador</em>) e, na caixa de estilos, escolha <strong>Título</strong>. Na linha logo abaixo (<em>Trabalho prático de formatação de texto</em>), aplique <strong>Subtítulo</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">11</div>
+    <div class="conteudo">
+      <p>Aplique o estilo <strong>Título 1</strong> (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd>) às linhas: <em>Introdução</em>, <em>Funções de um sistema operacional</em>, <em>Exemplos de sistemas operacionais</em>, <em>Processos</em>, <em>Conclusão</em> e <em>Referência</em>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">12</div>
+    <div class="conteudo">
+      <p>Abra <span class="caminho">Ver → Barra lateral de estruturas e tópicos</span> (ou o ícone de lista na lateral esquerda). Os títulos que você marcou devem aparecer ali. Clique em um deles e veja o documento "pular" para aquela parte.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">13</div>
+    <div class="conteudo">
+      <p><strong>Personalizando o estilo.</strong> Formate o título <em>Introdução</em> como preferir (por exemplo: Arial 14, negrito, cor azul-escura). Com o cursor nele, abra a caixa de estilos, passe o mouse em <strong>Título 1</strong> e clique em <strong>Usar essa formatação em Título 1</strong>. Observe o que acontece com os outros títulos.</p>
+    </div>
+  </div>
+
+  <h3 id="r-destaques">5. Destaques e listas</h3>
+  <div class="passo">
+    <div class="num">14</div>
+    <div class="conteudo">
+      <p>Na seção <em>Funções de um sistema operacional</em>, transforme as cinco linhas que começam com "Gerência…" em uma <strong>lista com marcadores</strong> (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>8</kbd>). Retire o recuo de primeira linha desses itens, se ele tiver sido aplicado.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">15</div>
+    <div class="conteudo">
+      <p>Em cada item da lista, coloque em <strong>negrito</strong> apenas o nome da função (por exemplo, <strong>Gerência do processador:</strong>), deixando a explicação em texto normal.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">16</div>
+    <div class="conteudo">
+      <p>Na seção <em>Processos</em>, transforme os cinco estados (Novo, Pronto, Executando, Suspenso, Terminado) em uma <strong>lista numerada</strong> (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>7</kbd>), também com o nome do estado em negrito.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">17</div>
+    <div class="conteudo">
+      <p>Aplique <em>itálico</em> nos nomes de programas e comandos citados no texto: <em>Gerenciador de Tarefas</em>, <em>Monitor do Sistema</em>, <em>ps</em> e <em>top</em>. Na seção <em>Processos</em>, coloque em <strong>negrito</strong> a primeira ocorrência das palavras <strong>programa</strong> e <strong>processo</strong>.</p>
+    </div>
+  </div>
+
+  <h3 id="r-tabela">6. Tabela</h3>
+  <div class="passo">
+    <div class="num">18</div>
+    <div class="conteudo">
+      <p>Conte as linhas e colunas dos dados separados por <code>|</code> na seção <em>Exemplos de sistemas operacionais</em> (incluindo a linha de cabeçalho). Posicione o cursor logo abaixo desses dados e abra <span class="caminho">Inserir → Tabela</span>, escolhendo o tamanho certo.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">19</div>
+    <div class="conteudo">
+      <p>Preencha a tabela com os dados (pode copiar (<kbd>Ctrl</kbd>+<kbd>c</kbd>) e colar célula por célula (<kbd>Ctrl</kbd>+<kbd>v</kbd>)) e depois <strong>apague as linhas originais com <code>|</code></strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">20</div>
+    <div class="conteudo">
+      <p>Formate o cabeçalho da tabela: texto em <strong>negrito</strong>, centralizado, com uma <strong>cor de fundo</strong> na célula. Retire o recuo de primeira linha das células, se houver.</p>
+    </div>
+  </div>
+
+
+  <h3 id="r-imagem">7. Imagem com legenda</h3>
+  <div class="passo">
+    <div class="num">21</div>
+    <div class="conteudo">
+      <p>No fim da seção <em>Introdução</em>, insira uma imagem relacionada a sistemas operacionais (um computador, o logotipo de um sistema, o Gerenciador de Tarefas…) com <span class="caminho">Inserir → Imagem</span>. Você pode enviar uma imagem do computador ou capturar a sua própria tela.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">22</div>
+    <div class="conteudo">
+      <p>Clique na imagem e ajuste o tamanho arrastando os cantos (para não distorcer). Escolha a opção <strong>Inline</strong> na barra que aparece abaixo da imagem e centralize-a.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">23</div>
+    <div class="conteudo">
+      <p>Na linha logo abaixo da imagem, escreva uma legenda no formato <code>Figura 1 – descrição da imagem</code>. Formate a legenda com fonte Arial, em tamanho <strong>10</strong>, centralizada e sem recuo.</p>
+    </div>
+  </div>
+
+  <h3 id="r-cabecalho">8. Cabeçalho, rodapé e números de página</h3>
+  <div class="passo">
+    <div class="num">24</div>
+    <div class="conteudo">
+      <p>Abra <span class="caminho">Inserir → Elementos de página → Cabeçalho</span> e escreva: <code>IFNMG – Softwares, Aplicativos e Sistemas Operacionais</code>. Formate com fonte Arial, tamanho 10 e alinhado à direita.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">25</div>
+    <div class="conteudo">
+      <p>Abra <span class="caminho">Inserir → Elementos de página → Números de página</span> e escolha a opção que coloca o número no <strong>canto superior direito</strong> e <strong>número de página no cabeçalho a partir da segunda página</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">26</div>
+    <div class="conteudo">
+      <p>No rodapé (<span class="caminho">Inserir → Elementos de página → Rodapé</span>), escreva o seu nome completo e a sua turma, com fonte Arial, tamanho 10 e centralizado.</p>
+    </div>
+  </div>
+
+
+  <h3 id="r-sumario">9. Capa e sumário automático</h3>
+  <div class="passo">
+    <div class="num">27</div>
+    <div class="conteudo">
+      <p>Coloque o cursor <strong>logo antes</strong> da palavra <em>Introdução</em> e insira uma <strong>quebra de página</strong> (<kbd>Ctrl</kbd>+<kbd>Enter</kbd>). Assim, o título e o subtítulo ficam sozinhos na primeira página, que será a capa.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">28</div>
+    <div class="conteudo">
+      <p>Na capa, centralize o título e o subtítulo e, abaixo deles, acrescente o seu nome, a turma e a cidade/ano (por exemplo, <em>Salinas – 2026</em>). Use <span class="caminho">Formatar → Espaçamento entre linhas e parágrafos → Adicionar espaço antes do parágrafo</span> ou linhas em branco para distribuir os elementos na página.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">29</div>
+    <div class="conteudo">
+      <p>Depois da capa, crie uma nova página (outra quebra de página antes de <em>Introdução</em>). Nela, escreva <code>Sumário</code> (Arial, 12, centralizado, em negrito) e abra <span class="caminho">Inserir → Elementos de página → Sumário</span>, escolhendo a opção <strong>Pontilhado</strong>.</p>
+    </div>
+  </div>
+
+
+  <h2 id="entrega">Entrega</h2>
+
+  <div class="passo">
+    <div class="num">31</div>
+    <div class="conteudo">
+      <p>Gere o PDF em <span class="caminho">Arquivo → Baixar → Documento PDF (.pdf)</span>. Abra o PDF e confira se a formatação foi mantida. Envie o PDF pelo Classroom em 3º Trimestre → Atividade 2.</p>
+    </div>
+  </div>
+
+
+</main>
+</div>
+<script>
+  function copiarTexto(){
+    var texto = document.getElementById('conteudo-texto').innerText;
+    var aviso = document.getElementById('aviso');
+    function ok(){ aviso.textContent = 'Texto copiado!'; setTimeout(function(){ aviso.textContent=''; }, 2500); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(ok, reserva);
+    } else { reserva(); }
+    function reserva(){
+      var area = document.createElement('textarea');
+      area.value = texto; document.body.appendChild(area); area.select();
+      try { document.execCommand('copy'); ok(); } catch(e){ aviso.textContent = 'Selecione o texto e use Ctrl+C.'; }
+      document.body.removeChild(area);
+    }
+  }
+</script>
+</body>
+</html>
