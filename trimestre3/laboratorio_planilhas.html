@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório: Google Planilhas</title>
+<style>
+  :root{
+    --azul: #1b4b6b;
+    --azul-claro: #2d7dab;
+    --fundo: #f7f9fb;
+    --caixa: #eef4f8;
+    --borda: #d6e2ea;
+    --texto: #26333d;
+    --win: #2d7dab;
+    --lin: #b5651d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: "Segoe UI", Verdana, Arial, sans-serif;
+    background:var(--fundo); color:var(--texto); line-height:1.6;
+  }
+  .topo{
+    background:var(--azul); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  .topo .titulo-topo{font-weight:600; font-size:1.05em;}
+  #menu-toggle{display:none;}
+  label.hamburguer{
+    cursor:pointer; font-size:1.4em; display:block; color:#fff;
+    padding:2px 8px; border-radius:4px; user-select:none;
+  }
+  label.hamburguer:hover{background:rgba(255,255,255,.15);}
+  .layout{max-width:1200px; margin:0 auto;}
+  nav.sumario{
+    width:270px; background:#fff; border-right:1px solid var(--borda);
+    padding:20px 16px; overflow-y:auto;
+    position:fixed; left:-290px; top:56px; bottom:0; z-index:20;
+    transition:left .25s ease; box-shadow: 2px 0 10px rgba(0,0,0,.15);
+  }
+  #menu-toggle:checked ~ .layout nav.sumario{left:0;}
+  nav.sumario h2{font-size:0.95em; text-transform:uppercase; letter-spacing:.05em; color:var(--azul-claro); margin-top:0;}
+  nav.sumario ol{padding-left:18px; margin:0;}
+  nav.sumario li{margin-bottom:8px; font-size:0.92em;}
+  nav.sumario a{color:var(--texto); text-decoration:none;}
+  nav.sumario a:hover{color:var(--azul-claro); text-decoration:underline;}
+  label.veu{
+    display:none; position:fixed; top:56px; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.25); z-index:15; cursor:pointer;
+  }
+  #menu-toggle:checked ~ .layout label.veu{display:block;}
+  main{padding:28px 40px; max-width:860px; margin:0 auto;}
+  h1{color:var(--azul); font-size:1.7em; margin-bottom:4px;}
+  .subtitulo{color:#5a6a75; margin-top:0; margin-bottom:28px; font-size:1em;}
+  h2{color:var(--azul); border-bottom:2px solid var(--borda); padding-bottom:6px; margin-top:46px;}
+  h3{color:var(--azul-claro); margin-top:28px;}
+  h4{color:var(--azul); margin-bottom:4px;}
+  p{margin:12px 0;}
+  .caixa{
+    background:var(--caixa); border-left:4px solid var(--azul-claro);
+    border-radius:4px; padding:14px 18px; margin:18px 0;
+  }
+  .caixa.definicao{border-left-color:#b5651d;}
+  .caixa.exemplo{border-left-color:#2e8b57;}
+  .caixa.observacao{border-left-color:#7a5ea8;}
+  .caixa.atencao{border-left-color:#c0392b; background:#fdecea;}
+  .caixa.conceito{border-left-color:#2e8b57; background:#eef7f0;}
+  .caixa.comando{border-left-color:#5a6a75; background:#f2f4f6;}
+  .caixa strong.rotulo{
+    display:block; text-transform:uppercase; font-size:0.78em; letter-spacing:.06em;
+    color:#6b7b85; margin-bottom:6px;
+  }
+  figure{margin:22px 0; text-align:center;}
+  figure svg{max-width:100%; height:auto; border:1px solid var(--borda); border-radius:6px; background:#fff; padding:10px;}
+  figcaption{font-size:0.88em; color:#5a6a75; margin-top:8px; font-style:italic;}
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:0.93em;}
+  th, td{border:1px solid var(--borda); padding:8px 10px; text-align:left; vertical-align:top;}
+  th{background:var(--azul); color:#fff;}
+  tr:nth-child(even) td{background:#f2f6f9;}
+  code, .mono{
+    font-family: Consolas, "Courier New", monospace; background:#eef2f5;
+    padding:1px 5px; border-radius:3px; font-size:0.92em;
+  }
+  pre{
+    background:#20303c; color:#e8f0f5; padding:14px 16px; border-radius:6px;
+    overflow-x:auto; font-family: Consolas, "Courier New", monospace; font-size:0.9em;
+    margin:14px 0;
+  }
+  pre code{background:none; padding:0; color:inherit;}
+  ul, ol{margin:10px 0; padding-left:24px;}
+  .trilha{
+    border-radius:8px; padding:2px 22px 22px 22px; margin:30px 0;
+  }
+  .trilha-win{background:#eef6fb; border:2px solid var(--win);}
+  .trilha-lin{background:#fbf3ea; border:2px solid var(--lin);}
+  .trilha h2{margin-top:20px;}
+  .trilha-win h2{color:var(--win); border-bottom-color:var(--win);}
+  .trilha-lin h2{color:var(--lin); border-bottom-color:var(--lin);}
+  .selo{
+    display:inline-block; color:#fff; font-size:0.75em; font-weight:600;
+    padding:3px 10px; border-radius:12px; letter-spacing:.03em; text-transform:uppercase;
+    margin-left:8px; vertical-align:middle;
+  }
+  .selo-win{background:var(--win);}
+  .selo-lin{background:var(--lin);}
+  .passo{
+    display:flex; gap:14px; margin:16px 0; align-items:flex-start;
+    background:#fff; border:1px solid var(--borda); border-radius:6px; padding:12px 16px;
+  }
+  .passo .num{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    background:var(--azul); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:0.95em;
+  }
+  .trilha-win .passo .num{background:var(--win);}
+  .trilha-lin .passo .num{background:var(--lin);}
+  .passo .conteudo{flex:1;}
+  .passo .conteudo p:first-child{margin-top:0;}
+  .passo .conteudo p:last-child{margin-bottom:0;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--borda); font-size:0.85em; color:#7a8a94;}
+  .relatorio ol > li{margin-bottom:10px;}
+  @media (max-width: 860px){
+    main{padding:22px 18px;}
+    nav.sumario{width:82vw; max-width:280px;}
+    .passo{flex-direction:column;}
+  }
+</style>
+<style>
+  .texto-base{
+    background:#fff; border:1px dashed #8aa6b5; border-radius:6px; padding:16px 18px;
+    font-family: Consolas, "Courier New", monospace; font-size:0.88em; white-space:pre-wrap;
+    max-height:420px; overflow-y:auto; margin:10px 0;
+  }
+  .botao-copiar{
+    background:var(--azul-claro); color:#fff; border:none; border-radius:4px;
+    padding:8px 16px; font-size:0.95em; cursor:pointer; font-family:inherit;
+  }
+  .botao-copiar:hover{background:var(--azul);}
+  .aviso-copia{margin-left:10px; color:#2e8b57; font-weight:600;}
+  kbd{
+    font-family: Consolas, "Courier New", monospace; font-size:0.85em;
+    background:#fff; border:1px solid #b9c7d0; border-bottom-width:2px; border-radius:3px; padding:0 5px;
+  }
+  .caminho{font-weight:600; color:var(--azul);}
+</style>
+<style>
+  .dados-wrap{overflow-x:auto; margin:10px 0;}
+  table.dados{font-family: Consolas, "Courier New", monospace; font-size:0.85em; margin:0;}
+  table.dados th{background:#e8eaed; color:#3c4043; text-align:center; font-weight:600;}
+  table.dados td.n{text-align:right;}
+  table.dados td.rot, table.dados th.rot{background:#e8eaed; color:#3c4043; text-align:center; width:34px;}
+  .formula{font-family: Consolas, "Courier New", monospace; background:#fff; border:1px solid var(--borda); border-radius:4px; padding:2px 8px; font-size:0.92em; white-space:nowrap;}
+  .esperado{color:#2e8b57; font-weight:600;}
+  td code, li code{overflow-wrap:anywhere;}
+  @media (max-width: 860px){ .formula{white-space:normal; overflow-wrap:anywhere;} }
+</style>
+</head>
+<body>
+<input type="checkbox" id="menu-toggle">
+<div class="topo">
+  <label class="hamburguer" for="menu-toggle">☰</label>
+  <span class="titulo-topo">Laboratório Prático — Google Planilhas</span>
+  <span></span>
+</div>
+<div class="layout">
+<label class="veu" for="menu-toggle"></label>
+<nav class="sumario">
+  <h2>Sumário</h2>
+  <ol>
+    <li><a href="#intro">Antes de começar</a></li>
+    <li><a href="#conceitos">Conceitos-chave da prática</a>
+      <ol>
+        <li><a href="#conc-celula">Célula, linha, coluna e intervalo</a></li>
+        <li><a href="#conc-formula">Fórmulas e funções</a></li>
+        <li><a href="#conc-ref">Referência relativa e absoluta</a></li>
+      </ol>
+    </li>
+    <li><a href="#dados">Os dados da prática</a></li>
+    <li><a href="#roteiro">Roteiro da atividade</a>
+      <ol>
+        <li><a href="#r-preparar">1. Preparando a planilha</a></li>
+        <li><a href="#r-formatar">2. Formatando a tabela</a></li>
+        <li><a href="#r-totais">3. Estatísticas da turma</a></li>
+        <li><a href="#r-calculos">4. Média final e frequência</a></li>
+        <li><a href="#r-se">5. Situação com SE</a></li>
+        <li><a href="#r-condicional">6. Formatação condicional</a></li>
+        <li><a href="#r-validacao">7. Lista suspensa e caixa de seleção</a></li>
+        <li><a href="#r-filtro">8. Classificar e filtrar</a></li>
+        <li><a href="#r-resumo">9. Aba de resumo</a></li>
+        <li><a href="#r-grafico">10. Gráficos</a></li>
+      </ol>
+    </li>
+    <li><a href="#entrega">Entrega</a></li>
+    <li><a href="#creditos">Créditos</a></li>
+  </ol>
+</nav>
+<main>
+  <h1>Laboratório Prático: Google Planilhas</h1>
+  <p class="subtitulo">Atividade prática — Softwares, Aplicativos e Sistemas Operacionais</p>
+
+  <h2 id="intro">Antes de começar</h2>
+  <p>Depois de assistir à videoaula sobre o <strong>Google Planilhas</strong>, chegou a hora de praticar. Você vai montar uma <strong>planilha de notas</strong>, parecida com o diário que os professores usam: as notas de cada trimestre, as faltas, a média final, a frequência e a situação de cada aluno.</p>
+  <p>Os alunos e as notas são <strong>fictícios</strong>. Com esses dados, você vai praticar formatação, fórmulas, funções, formatação condicional, filtros e gráficos.</p>
+
+  <!-- <div class="caixa observacao">
+    <strong class="rotulo">Do que você vai precisar</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li>Um computador com navegador (Chrome, Firefox, Edge — tanto faz se é Windows ou Linux);</li>
+      <li>Uma conta Google (pode ser a conta institucional);</li>
+      <li>Cerca de duas aulas (100 minutos).</li>
+    </ul>
+  </div> -->
+
+  <!-- <div class="caixa atencao">
+    <strong class="rotulo">Atenção</strong>
+    Não digite os resultados "na mão". Todo número calculado nesta prática deve vir de uma <strong>fórmula</strong>. A professora vai clicar nas células e conferir a barra de fórmulas.
+  </div> -->
+
+  <h2 id="conceitos">Conceitos-chave da prática</h2>
+
+  <h3 id="conc-celula">Célula, linha, coluna e intervalo</h3>
+  <p>Uma planilha é uma grade. As <strong>colunas</strong> são identificadas por letras (A, B, C…) e as <strong>linhas</strong>, por números (1, 2, 3…). O encontro de uma coluna com uma linha é uma <strong>célula</strong>, que recebe o nome da coluna seguido do número da linha.</p>
+
+  <figure>
+    <svg viewBox="0 0 560 270" width="560" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+      <!-- barra de fórmulas -->
+      <rect x="10" y="10" width="540" height="30" fill="#fff" stroke="#b9c7d0"/>
+      <rect x="10" y="10" width="60" height="30" fill="#eef2f5" stroke="#b9c7d0"/>
+      <text x="40" y="30" text-anchor="middle" fill="#26333d" font-weight="600">C3</text>
+      <text x="84" y="30" fill="#7a8a94" font-style="italic">fx</text>
+      <text x="106" y="30" fill="#26333d" font-family="Consolas, monospace">=A3*B3</text>
+      <text x="300" y="30" fill="#b5651d" font-size="12">← barra de fórmulas (mostra a fórmula)</text>
+      <!-- cabeçalhos -->
+      <g fill="#e8eaed" stroke="#b9c7d0">
+        <rect x="10" y="55" width="40" height="28"/>
+        <rect x="50" y="55" width="110" height="28"/><rect x="160" y="55" width="110" height="28"/>
+        <rect x="270" y="55" width="110" height="28"/><rect x="380" y="55" width="110" height="28"/>
+        <rect x="10" y="83" width="40" height="28"/><rect x="10" y="111" width="40" height="28"/>
+        <rect x="10" y="139" width="40" height="28"/><rect x="10" y="167" width="40" height="28"/>
+      </g>
+      <g text-anchor="middle" fill="#3c4043" font-weight="600">
+        <text x="105" y="74">A</text><text x="215" y="74">B</text><text x="325" y="74">C</text><text x="435" y="74">D</text>
+        <text x="30" y="102">1</text><text x="30" y="130">2</text><text x="30" y="158">3</text><text x="30" y="186">4</text>
+      </g>
+      <!-- grade -->
+      <g fill="#fff" stroke="#d6e2ea">
+        <rect x="50" y="83" width="440" height="112"/>
+      </g>
+      <!-- coluna D destacada -->
+      <rect x="380" y="83" width="110" height="112" fill="#fbf3ea" stroke="#d6e2ea"/>
+      <!-- linha 1 destacada -->
+      <rect x="50" y="83" width="330" height="28" fill="#eef7f0" stroke="#d6e2ea"/>
+      <!-- intervalo A2:B4 -->
+      <rect x="50" y="111" width="220" height="84" fill="#eaf1f7" stroke="#2d7dab" stroke-width="2" stroke-dasharray="6 4"/>
+      <!-- célula C3 -->
+      <rect x="270" y="139" width="110" height="28" fill="#fff" stroke="#1a73e8" stroke-width="3"/>
+      <g stroke="#d6e2ea">
+        <line x1="160" y1="83" x2="160" y2="195"/><line x1="270" y1="83" x2="270" y2="139"/><line x1="270" y1="167" x2="270" y2="195"/>
+        <line x1="50" y1="111" x2="380" y2="111"/><line x1="50" y1="139" x2="270" y2="139"/><line x1="50" y1="167" x2="270" y2="167"/>
+        <line x1="380" y1="111" x2="490" y2="111"/><line x1="380" y1="139" x2="490" y2="139"/><line x1="380" y1="167" x2="490" y2="167"/>
+      </g>
+      <text x="325" y="158" text-anchor="middle" fill="#26333d" font-family="Consolas, monospace">12</text>
+      <rect x="374" y="161" width="7" height="7" fill="#1a73e8"/>
+      <!-- legendas -->
+      <text x="215" y="102" text-anchor="middle" fill="#2e8b57" font-weight="600">linha 1</text>
+      <text x="435" y="140" text-anchor="middle" fill="#b5651d" font-weight="600">coluna D</text>
+      <text x="160" y="162" text-anchor="middle" fill="#2d7dab" font-weight="600">intervalo A2:B4</text>
+      <text x="270" y="225" fill="#1a73e8" font-weight="600">célula C3 (selecionada)</text>
+      <line x1="325" y1="212" x2="325" y2="170" stroke="#1a73e8"/>
+      <text x="400" y="255" fill="#5a6a75" font-size="12">■ alça de preenchimento</text>
+      <line x1="398" y1="248" x2="380" y2="170" stroke="#5a6a75" stroke-dasharray="3 3"/>
+    </svg>
+    <figcaption>Figura 1 – Partes de uma planilha: célula, linha, coluna, intervalo e barra de fórmulas.</figcaption>
+  </figure>
+
+  <div class="caixa definicao">
+    <strong class="rotulo">Definição</strong>
+    <strong>Intervalo</strong> é um conjunto retangular de células, escrito com a primeira e a última célula separadas por dois-pontos. <code>A2:B4</code> significa "de A2 até B4" (6 células). Uma <strong>aba</strong> (ou página) é uma planilha dentro do arquivo; um arquivo pode ter várias abas, mostradas na parte de baixo da tela.
+  </div>
+
+  <h3 id="conc-formula">Fórmulas e funções</h3>
+  <p>Toda <strong>fórmula</strong> começa com o sinal de igual <code>=</code>. Ela pode usar operadores (<code>+</code> <code>-</code> <code>*</code> <code>/</code>) e <strong>funções</strong>, que são cálculos prontos com um nome.</p>
+  <table>
+    <tr><th>Função</th><th>O que faz</th><th>Exemplo</th></tr>
+    <tr><td><code>MÉDIA</code></td><td>Calcula a média aritmética</td><td><code>=MÉDIA(D2:F2)</code></td></tr>
+    <tr><td><code>MÁXIMO</code> / <code>MÍNIMO</code></td><td>Maior e menor valor do intervalo</td><td><code>=MÁXIMO(D2:D16)</code></td></tr>
+    <tr><td><code>SOMA</code></td><td>Soma os valores de um intervalo</td><td><code>=SOMA(G2:G16)</code></td></tr>
+    <tr><td><code>SE</code></td><td>Testa uma condição e devolve um valor se for verdadeira e outro se for falsa</td><td><code>=SE(H2&gt;=6;"Aprovado";"Recuperação")</code></td></tr>
+    <tr><td><code>CONT.SE</code></td><td>Conta quantas células atendem a um critério</td><td><code>=CONT.SE(J2:J16;"Aprovado")</code></td></tr>
+  </table>
+  <div class="caixa observacao">
+    <strong class="rotulo">Ponto e vírgula ou vírgula?</strong>
+    Com a planilha configurada para o <strong>Brasil</strong>, os argumentos das funções são separados por <strong>ponto e vírgula</strong> (<code>;</code>) e os números decimais usam <strong>vírgula</strong> (<code>7,5</code>). Se as suas funções aparecerem em inglês (<code>AVERAGE</code>, <code>IF</code>) ou os decimais estiverem com ponto, ajuste a localidade no Passo 2.
+  </div>
+
+  <h3 id="conc-ref">Referência relativa e absoluta</h3>
+  <p>Quando você arrasta uma fórmula para baixo com a <strong>alça de preenchimento</strong> (o quadradinho azul no canto da célula), o Google Planilhas ajusta as referências automaticamente: <code>=MÉDIA(D2:F2)</code> vira <code>=MÉDIA(D3:F3)</code>, <code>=MÉDIA(D4:F4)</code> e assim por diante. Isso é uma <strong>referência relativa</strong>.</p>
+  <p>Às vezes, porém, uma referência <strong>não pode mudar</strong>, como a célula com o número de aulas dadas, que é o mesmo para todos os alunos. Para "travar" a célula, use o cifrão: <code>$M$2</code>. Isso é uma <strong>referência absoluta</strong>. Dica: com o cursor sobre a referência na fórmula, pressione <kbd>F4</kbd> para colocar os cifrões.</p>
+  <!-- <div class="caixa conceito">
+    <strong class="rotulo">Atalhos que você vai usar o tempo todo</strong>
+    <kbd>Ctrl</kbd>+<kbd>Z</kbd> desfaz · <kbd>Ctrl</kbd>+<kbd>B</kbd> negrito · <kbd>F2</kbd> edita a célula · <kbd>F4</kbd> alterna referência relativa/absoluta · <kbd>Ctrl</kbd>+<kbd>`</kbd> mostra todas as fórmulas · clique duplo na divisa entre as letras das colunas ajusta a largura.
+  </div> -->
+
+  <h2 id="dados">Os dados da prática</h2>
+  <div class="passo">
+    <div class="num">1</div>
+    <div class="conteudo">
+      <p>Acesse <a href="https://sheets.google.com" target="_blank" rel="noopener">sheets.google.com</a> e crie uma <strong>planilha em branco</strong>. Clique em "Planilha sem título", no canto superior esquerdo, e renomeie para <code>Notas_SeuNome</code>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">2</div>
+    <div class="conteudo">
+      <p>Abra <span class="caminho">Arquivo → Configurações</span> e confira se a <strong>Localidade</strong> está como <strong>Brasil</strong>. Se não estiver, altere e clique em <strong>Salvar configurações</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">3</div>
+    <div class="conteudo">
+      <p>Clique no botão abaixo para copiar os dados. Na planilha, clique na célula <strong>A1</strong> e cole com <kbd>Ctrl</kbd>+<kbd>V</kbd>. Cada valor deve cair em uma célula diferente (colunas A até G, linhas 1 até 16).</p>
+      <p><button class="botao-copiar" onclick="copiarDados()">📋 Copiar dados</button><span id="aviso" class="aviso-copia"></span></p>
+    </div>
+  </div>
+
+  <div class="dados-wrap">
+  <table class="dados" id="tabela-dados">
+    <tr><th class="rot"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr>
+    <tr><td class="rot">1</td><td>Matrícula</td><td>Aluno</td><td>Turma</td><td>Nota 1º tri</td><td>Nota 2º tri</td><td>Nota 3º tri</td><td>Faltas</td></tr>
+    <tr><td class="rot">2</td><td class="n">2026001</td><td>Ana Clara Souza</td><td>A</td><td class="n">7,5</td><td class="n">8,0</td><td class="n">8,5</td><td class="n">4</td></tr>
+    <tr><td class="rot">3</td><td class="n">2026002</td><td>Bruno Henrique Lima</td><td>A</td><td class="n">5,0</td><td class="n">4,5</td><td class="n">6,0</td><td class="n">12</td></tr>
+    <tr><td class="rot">4</td><td class="n">2026003</td><td>Carla Mendes</td><td>B</td><td class="n">9,0</td><td class="n">9,5</td><td class="n">9,0</td><td class="n">0</td></tr>
+    <tr><td class="rot">5</td><td class="n">2026004</td><td>Daniel Ferreira</td><td>A</td><td class="n">6,0</td><td class="n">6,5</td><td class="n">5,0</td><td class="n">6</td></tr>
+    <tr><td class="rot">6</td><td class="n">2026005</td><td>Eduarda Rocha</td><td>B</td><td class="n">8,0</td><td class="n">7,0</td><td class="n">7,5</td><td class="n">2</td></tr>
+    <tr><td class="rot">7</td><td class="n">2026006</td><td>Felipe Santos</td><td>A</td><td class="n">4,0</td><td class="n">5,5</td><td class="n">4,5</td><td class="n">22</td></tr>
+    <tr><td class="rot">8</td><td class="n">2026007</td><td>Gabriela Alves</td><td>B</td><td class="n">7,0</td><td class="n">8,5</td><td class="n">9,0</td><td class="n">3</td></tr>
+    <tr><td class="rot">9</td><td class="n">2026008</td><td>Heitor Oliveira</td><td>A</td><td class="n">6,5</td><td class="n">7,0</td><td class="n">7,0</td><td class="n">8</td></tr>
+    <tr><td class="rot">10</td><td class="n">2026009</td><td>Isabela Costa</td><td>B</td><td class="n">5,5</td><td class="n">5,0</td><td class="n">6,5</td><td class="n">10</td></tr>
+    <tr><td class="rot">11</td><td class="n">2026010</td><td>João Pedro Silva</td><td>A</td><td class="n">8,5</td><td class="n">9,0</td><td class="n">9,5</td><td class="n">1</td></tr>
+    <tr><td class="rot">12</td><td class="n">2026011</td><td>Larissa Pereira</td><td>B</td><td class="n">3,5</td><td class="n">4,0</td><td class="n">5,5</td><td class="n">15</td></tr>
+    <tr><td class="rot">13</td><td class="n">2026012</td><td>Mateus Ribeiro</td><td>A</td><td class="n">7,0</td><td class="n">6,0</td><td class="n">6,5</td><td class="n">5</td></tr>
+    <tr><td class="rot">14</td><td class="n">2026013</td><td>Natália Gomes</td><td>B</td><td class="n">9,5</td><td class="n">10,0</td><td class="n">9,0</td><td class="n">0</td></tr>
+    <tr><td class="rot">15</td><td class="n">2026014</td><td>Otávio Martins</td><td>A</td><td class="n">5,5</td><td class="n">6,0</td><td class="n">6,0</td><td class="n">9</td></tr>
+    <tr><td class="rot">16</td><td class="n">2026015</td><td>Rafaela Dias</td><td>B</td><td class="n">6,0</td><td class="n">5,0</td><td class="n">5,5</td><td class="n">7</td></tr>
+
+  </table>
+  </div>
+
+  <!-- <div class="caixa observacao">
+    <strong class="rotulo">Regras desta prática</strong>
+    A média final é a <strong>média das três notas</strong> e o aluno precisa de média <strong>6,0</strong> para ser aprovado. No ano, foram dadas <strong>80 aulas</strong>, e a frequência mínima é de <strong>75%</strong>.
+  </div> -->
+
+  <h2 id="roteiro">Roteiro da atividade</h2>
+  <p>Siga as partes na ordem. Sempre que aparecer uma fórmula nova, há logo abaixo um quadro <strong>Entendendo a fórmula</strong>, que explica cada parte dela. Leia o quadro antes de digitar: o objetivo é entender a fórmula, e não só copiá-la.</p>
+
+  <h3 id="r-preparar">1. Preparando a planilha</h3>
+  <div class="passo">
+    <div class="num">4</div>
+    <div class="conteudo">
+      <p>Clique com o botão direito na aba <strong>Página1</strong>, na parte de baixo da tela, escolha <strong>Renomear</strong> e digite <code>Notas</code>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">5</div>
+    <div class="conteudo">
+      <p>Abra <span class="caminho">Ver → Congelar → 1 linha</span>. Role a planilha para baixo e repare que o cabeçalho continua visível.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">6</div>
+    <div class="conteudo">
+      <p>Ajuste a largura das colunas A até G para caber o conteúdo: selecione as colunas clicando nas letras, clique com o botão direito e escolha <strong>Redimensionar colunas → Ajustar aos dados</strong> (ou dê um clique duplo na divisa entre duas letras).</p>
+    </div>
+  </div>
+
+  <h3 id="r-formatar">2. Formatando a tabela</h3>
+  <div class="passo">
+    <div class="num">7</div>
+    <div class="conteudo">
+      <p>Selecione o cabeçalho (<code>A1:G1</code>) e aplique: <strong>negrito</strong>, texto centralizado, cor de preenchimento azul-escura (ícone de <strong>balde</strong>) e cor do texto branca.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">8</div>
+    <div class="conteudo">
+      <p>Selecione <code>A1:G16</code> e aplique <strong>todas as bordas</strong> (ícone de bordas na barra de ferramentas).</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">9</div>
+    <div class="conteudo">
+      <p>Repare que algumas notas aparecem como <code>8</code> e outras como <code>7,5</code>. Selecione <code>D2:F16</code> e use o botão <strong>Aumentar casas decimais</strong> (<code>.00</code>) até todas mostrarem <strong>uma</strong> casa decimal (<code>8,0</code>). Centralize as colunas <strong>A</strong>, <strong>C</strong> e <strong>G</strong>.</p>
+    </div>
+  </div>
+  <div class="caixa observacao">
+    <strong class="rotulo">Dica</strong>
+    Existe um atalho para deixar a tabela com linhas "zebradas": <span class="caminho">Formatar → Cores alternadas</span>. Você pode usar, mas mantenha o cabeçalho escuro do Passo 7.
+  </div>
+
+  <h3 id="r-totais">3. Estatísticas da turma</h3>
+  <p>Agora você vai calcular, embaixo da tabela, a média, a maior e a menor nota de cada trimestre, e também das faltas.</p>
+  <div class="passo">
+    <div class="num">10</div>
+    <div class="conteudo">
+      <p>Digite os rótulos em <strong>C17</strong>, <strong>C18</strong> e <strong>C19</strong>: <code>Média</code>, <code>Maior</code> e <code>Menor</code>. Deixe-os em negrito e alinhados à direita.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">11</div>
+    <div class="conteudo">
+      <p>Na célula <strong>D17</strong>, digite <span class="formula">=MÉDIA(D2:D16)</span>. Em <strong>D18</strong>, <span class="formula">=MÁXIMO(D2:D16)</span>. Em <strong>D19</strong>, <span class="formula">=MÍNIMO(D2:D16)</span>. Deixe as três com uma casa decimal.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li><code>=</code> avisa à planilha que o conteúdo é uma fórmula. Sem ele, a planilha mostraria o texto <code>MÉDIA(D2:D16)</code> na célula.</li>
+      <li><code>MÉDIA</code> é o nome da função. Entre os parênteses vai o <strong>argumento</strong>, ou seja, os dados com que a função vai trabalhar.</li>
+      <li><code>D2:D16</code> é o intervalo com as notas do 1º trimestre de todos os alunos (de D2 até D16). A função soma as 15 notas e divide o resultado por 15.</li>
+      <li><code>MÁXIMO</code> e <code>MÍNIMO</code> usam o mesmo intervalo, mas, em vez de calcular a média, procuram o maior e o menor valor.</li>
+    </ul>
+  </div>
+  <div class="passo">
+    <div class="num">12</div>
+    <div class="conteudo">
+      <p>Selecione <code>D17:D19</code> e arraste a <strong>alça de preenchimento</strong> para a <strong>direita</strong>, até a coluna G. Clique em <strong>F17</strong> e observe na barra de fórmulas como o intervalo foi ajustado sozinho.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    Ao arrastar para a direita, a planilha troca a <strong>letra</strong> da coluna em cada cópia: <code>=MÉDIA(D2:D16)</code> vira <code>=MÉDIA(E2:E16)</code> na coluna E, <code>=MÉDIA(F2:F16)</code> na coluna F e <code>=MÉDIA(G2:G16)</code> na coluna G. Isso é a <strong>referência relativa</strong> funcionando: a fórmula "anda" junto com a célula.
+  </div>
+
+  <h3 id="r-calculos">4. Média final e frequência</h3>
+  <div class="passo">
+    <div class="num">13</div>
+    <div class="conteudo">
+      <p>Em <strong>H1</strong> digite <code>Média final</code>. Em <strong>H2</strong> digite <span class="formula">=MÉDIA(D2:F2)</span> e pressione <kbd>Enter</kbd>. Clique de novo em H2 e dê um <strong>clique duplo na alça de preenchimento</strong>: a fórmula é copiada até a linha 16. Deixe a coluna com <strong>uma</strong> casa decimal e estenda as estatísticas (linhas 17 a 19) até a coluna H.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li>Agora o intervalo é <strong>horizontal</strong>: <code>D2:F2</code> pega as três notas de um mesmo aluno (a linha 2 é a Ana Clara).</li>
+      <li>Para a Ana Clara, a conta é (7,5 + 8,0 + 8,5) ÷ 3 = 8,0.</li>
+      <li>Ao copiar para baixo, a planilha troca o <strong>número</strong> da linha: <code>=MÉDIA(D3:F3)</code> calcula a média do Bruno, <code>=MÉDIA(D4:F4)</code> a da Carla e assim por diante.</li>
+    </ul>
+  </div>
+  <div class="passo">
+    <div class="num">14</div>
+    <div class="conteudo">
+      <p>Em <strong>M1</strong> digite <code>Aulas dadas</code> e em <strong>M2</strong> digite <code>80</code>. Em <strong>I1</strong> digite <code>Frequência</code>. Em <strong>I2</strong> digite <span class="formula">=1-G2/M2</span> e arraste até a linha 16. Os resultados estão certos? Clique em I3 e olhe a fórmula.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li><code>G2/M2</code> divide as faltas do aluno pelo total de aulas. Para a Ana Clara: 4 ÷ 80 = 0,05, ou seja, ela faltou a 5% das aulas.</li>
+      <li><code>1-</code> tira essa parte do todo (1 = 100%): 1 − 0,05 = 0,95, ou seja, <strong>95% de presença</strong>.</li>
+      <li>Como na matemática, a planilha faz a divisão antes da subtração. Por isso não é preciso usar parênteses aqui.</li>
+    </ul>
+  </div>
+  <div class="passo">
+    <div class="num">15</div>
+    <div class="conteudo">
+      <p>Corrija a fórmula de I2 para <span class="formula">=1-G2/$M$2</span> (use <kbd>F4</kbd>) e arraste de novo até a linha 16. Depois, selecione <code>I2:I16</code> e aplique o formato de <strong>porcentagem</strong> (botão <strong>%</strong> ou <span class="caminho">Formatar → Número → Porcentagem</span>).</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li><strong>Por que deu erro antes?</strong> Ao arrastar <code>=1-G2/M2</code>, a planilha trocou as duas referências: na linha 3 a fórmula virou <code>=1-G3/M3</code>. Só que a célula M3 está vazia, e dividir por uma célula vazia é dividir por zero: o resultado é o erro <code>#DIV/0!</code>.</li>
+      <li><strong>O que o <code>$</code> faz:</strong> o cifrão antes da letra trava a coluna, e o cifrão antes do número trava a linha. Com <code>$M$2</code>, todas as cópias continuam dividindo pela célula M2 (80 aulas). Já <code>G2</code>, sem cifrão, continua mudando (G3, G4…), porque cada aluno tem as suas próprias faltas.</li>
+      <li>O formato de porcentagem só muda a aparência: a célula guarda <code>0,95</code> e mostra <code>95,00%</code>.</li>
+    </ul>
+  </div>
+  <div class="passo">
+    <div class="num">16</div>
+    <div class="conteudo">
+      <p>Copie a formatação do cabeçalho para <strong>H1</strong> e <strong>I1</strong> com o <strong>rolo de pintura</strong> (Copiar formatação) e estenda as bordas até a coluna I.</p>
+    </div>
+  </div>
+
+  <h3 id="r-se">5. Situação com SE</h3>
+  <div class="passo">
+    <div class="num">17</div>
+    <div class="conteudo">
+      <p>Em <strong>J1</strong> digite <code>Situação</code>. Em <strong>J2</strong> digite <span class="formula">=SE(H2&gt;=6;"Aprovado";"Recuperação")</span> e copie até a linha 16.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <p style="margin-top:0;">A função <code>SE</code> tem três partes, separadas por ponto e vírgula: <code>=SE(teste; valor se verdadeiro; valor se falso)</code>.</p>
+    <ul style="margin:6px 0 0 0;">
+      <li><code>H2&gt;=6</code> é o <strong>teste lógico</strong>: "a média final é maior ou igual a 6?". A resposta só pode ser verdadeiro ou falso.</li>
+      <li><code>"Aprovado"</code> é o que aparece se o teste for verdadeiro, e <code>"Recuperação"</code> é o que aparece se for falso. Textos sempre vão <strong>entre aspas</strong>.</li>
+      <li>Outros operadores que podem ser usados no teste: <code>&gt;</code> (maior que), <code>&lt;</code> (menor que), <code>&lt;=</code> (menor ou igual), <code>=</code> (igual) e <code>&lt;&gt;</code> (diferente).</li>
+    </ul>
+  </div>
+  <div class="passo">
+    <div class="num">18</div>
+    <div class="conteudo">
+      <p>Em <strong>I17</strong> digite o rótulo <code>Aprovados:</code> e em <strong>J17</strong> conte quantos alunos foram aprovados: <span class="formula">=CONT.SE(J2:J16;"Aprovado")</span>.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <code>CONT.SE</code> tem duas partes: <code>=CONT.SE(onde procurar; o que contar)</code>. Aqui, ela olha o intervalo <code>J2:J16</code> (a coluna Situação) e conta quantas células têm exatamente o texto <code>"Aprovado"</code>. Para contar quem está em recuperação, bastaria trocar o critério para <code>"Recuperação"</code>.
+  </div>
+
+  <h3 id="r-condicional">6. Formatação condicional</h3>
+  <p>A formatação condicional muda a aparência da célula de acordo com o valor dela, sem você precisar pintar uma por uma.</p>
+  <div class="passo">
+    <div class="num">19</div>
+    <div class="conteudo">
+      <p>Selecione <code>D2:F16</code> (as notas) e abra <span class="caminho">Formatar → Formatação condicional</span>. Em <strong>Regras de formatação</strong>, escolha <strong>É menor que</strong>, digite <code>6</code> e escolha texto vermelho em negrito. Clique em <strong>Concluído</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">20</div>
+    <div class="conteudo">
+      <p>Selecione <code>J2:J16</code> e crie uma regra <strong>O texto é exatamente</strong> <code>Recuperação</code>, com preenchimento vermelho-claro. Crie outra regra para <code>Aprovado</code>, com preenchimento verde-claro.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">21</div>
+    <div class="conteudo">
+      <p>Selecione <code>H2:H16</code> (média final) e crie uma regra na guia <strong>Escala de cores</strong>, indo do vermelho (menor valor) ao verde (maior valor).</p>
+    </div>
+  </div>
+
+  <h3 id="r-validacao">7. Lista suspensa e caixa de seleção</h3>
+  <div class="passo">
+    <div class="num">22</div>
+    <div class="conteudo">
+      <p>Selecione <code>C2:C16</code> (Turma) e abra <span class="caminho">Inserir → Lista suspensa</span>. Deixe apenas as opções <code>A</code> e <code>B</code> e escolha uma cor para cada uma. Em <strong>Opções avançadas</strong>, marque <strong>Rejeitar a entrada</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">23</div>
+    <div class="conteudo">
+      <p>Teste: tente digitar <code>C</code> em uma célula da coluna C. O que acontece?</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">24</div>
+    <div class="conteudo">
+      <p>Em <strong>K1</strong> digite <code>Monitoria?</code>. Selecione <code>K2:K16</code> e abra <span class="caminho">Inserir → Caixa de seleção</span>. Marque a caixa dos alunos que estão em recuperação e devem ser chamados para a monitoria.</p>
+    </div>
+  </div>
+
+  <h3 id="r-filtro">8. Classificar e filtrar</h3>
+  <div class="passo">
+    <div class="num">25</div>
+    <div class="conteudo">
+      <p>Selecione <strong>apenas</strong> o intervalo <code>A1:K16</code> (sem as linhas de estatísticas) e abra <span class="caminho">Dados → Criar um filtro</span>. Aparecem pequenos ícones de funil no cabeçalho.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">26</div>
+    <div class="conteudo">
+      <p>No funil da coluna <strong>Média final</strong>, escolha <strong>Classificar Z → A</strong>. A tabela vira um ranking, da maior para a menor média. Quem ficou em primeiro? As estatísticas das linhas 17 a 19 mudaram?</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">27</div>
+    <div class="conteudo">
+      <p>No funil da coluna <strong>Turma</strong>, use <strong>Filtrar por valores</strong> e deixe marcado só <code>B</code>. Anote quantos alunos aparecem. Depois volte a marcar todos e filtre a coluna <strong>Situação</strong> para mostrar só <code>Recuperação</code>. No fim, volte a mostrar tudo.</p>
+    </div>
+  </div>
+
+  <h3 id="r-resumo">9. Aba de resumo</h3>
+  <p>Fórmulas podem buscar dados em <strong>outra aba</strong>. Para isso, escreva o nome da aba seguido de ponto de exclamação: <code>Notas!J2:J16</code>.</p>
+  <div class="passo">
+    <div class="num">28</div>
+    <div class="conteudo">
+      <p>Clique no <strong>+</strong> no canto inferior esquerdo para criar uma nova aba e renomeie para <code>Resumo</code>. Em <strong>A1</strong> digite <code>Resumo da turma</code>, selecione <code>A1:C1</code> e use <span class="caminho">Formatar → Mesclar células → Mesclar tudo</span>. Deixe o título em negrito, tamanho 14.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">29</div>
+    <div class="conteudo">
+      <p>Monte a tabela de situação: em <strong>A3</strong> <code>Situação</code> e em <strong>B3</strong> <code>Quantidade</code>. Em A4 e A5 digite <code>Aprovado</code> e <code>Recuperação</code>. Em <strong>B4</strong> digite <span class="formula">=CONT.SE(Notas!$J$2:$J$16;A4)</span> e arraste até B5. Em A6 escreva <code>Total</code> e some em B6.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    <ul style="margin:6px 0 0 0;">
+      <li><code>Notas!</code> indica que o intervalo está em <strong>outra aba</strong>, a aba Notas. O ponto de exclamação separa o nome da aba do intervalo.</li>
+      <li><code>$J$2:$J$16</code> é a coluna Situação da aba Notas, com cifrões para o intervalo não mudar quando a fórmula for arrastada até B5.</li>
+      <li><code>A4</code>, sem cifrão, é o <strong>critério</strong>: em vez de escrever <code>"Aprovado"</code> na fórmula, usamos o texto que já está na célula A4. Ao arrastar, ele vira <code>A5</code> e passa a contar <code>Recuperação</code>.</li>
+      <li>No total, <code>=SOMA(B4:B5)</code> soma as duas quantidades. O resultado deve ser 15, o número de alunos.</li>
+    </ul>
+  </div>
+  <div class="passo">
+    <div class="num">30</div>
+    <div class="conteudo">
+      <p>Monte a tabela de estatísticas gerais: em <strong>A8</strong> <code>Indicador</code> e em <strong>B8</strong> <code>Valor</code>. Em A9, A10 e A11 digite <code>Média geral da turma</code>, <code>Maior média final</code> e <code>Total de faltas</code>. Em <strong>B9</strong> digite <span class="formula">=MÉDIA(Notas!H2:H16)</span>, em <strong>B10</strong> <span class="formula">=MÁXIMO(Notas!H2:H16)</span> e em <strong>B11</strong> <span class="formula">=SOMA(Notas!G2:G16)</span>.</p>
+    </div>
+  </div>
+  <div class="caixa comando">
+    <strong class="rotulo">Entendendo a fórmula</strong>
+    As três fórmulas usam funções que você já conhece, agora buscando os dados na aba Notas: <code>Notas!H2:H16</code> é a coluna Média final e <code>Notas!G2:G16</code> é a coluna Faltas. Como cada fórmula foi digitada em uma célula diferente, sem arrastar, não é preciso usar cifrões.
+  </div>
+  <div class="passo">
+    <div class="num">31</div>
+    <div class="conteudo">
+      <p>Formate as duas tabelas do resumo com o mesmo padrão da aba Notas (cabeçalho escuro, bordas, médias com uma casa decimal).</p>
+    </div>
+  </div>
+
+  <h3 id="r-grafico">10. Gráficos</h3>
+  <div class="passo">
+    <div class="num">32</div>
+    <div class="conteudo">
+      <p>Na aba <strong>Resumo</strong>, selecione <code>A3:B5</code> e abra <span class="caminho">Inserir → Gráfico</span>. No <strong>Editor de gráficos</strong>, em <strong>Configurar → Tipo de gráfico</strong>, escolha <strong>Gráfico de pizza</strong>.</p>
+    </div>
+  </div>
+  <div class="passo">
+    <div class="num">33</div>
+    <div class="conteudo">
+      <p>Volte à aba <strong>Notas</strong>, selecione <code>B1:B16</code>, segure <kbd>Ctrl</kbd> e selecione também <code>H1:H16</code>. Insira um <strong>gráfico de colunas</strong> com o título <code>Média final por aluno</code>. Posicione o gráfico abaixo ou ao lado da tabela, sem cobrir os dados.</p>
+    </div>
+  </div>
+
+
+  <h2 id="entrega">Entrega</h2>
+  <!-- <div class="passo">
+    <div class="num">34</div>
+    <div class="conteudo">
+      <p>Revise as duas abas. Use <kbd>Ctrl</kbd>+<kbd>`</kbd> para ver todas as fórmulas de uma vez e confira se nenhum resultado foi digitado à mão (aperte de novo para voltar).</p>
+    </div>
+  </div> -->
+  <div class="passo">
+    <div class="num">34</div>
+    <div class="conteudo">
+      <p>Clique em <strong>Compartilhar</strong>, no canto superior direito. Em Acesso geral, escolha Qualquer pessoa com o link e Editor. Clique em Copiar link. No Classroom, envie o link na Atividade 3 do 3º trimestre.</p>
+    </div>
+  </div>
+  <!-- <div class="passo">
+    <div class="num">36</div>
+    <div class="conteudo">
+      <p>Faça também o download em <span class="caminho">Arquivo → Fazer download → Microsoft Excel (.xlsx)</span> e envie o arquivo pela plataforma indicada pela professora.</p>
+    </div>
+  </div> -->
+
+  <footer id="creditos">
+    <p>Instituto Federal do Norte de Minas Gerais (IFNMG) - Campus Salinas — Curso Técnico em Informática — Disciplina: Softwares, Aplicativos e Sistemas Operacionais.</p>
+  </footer>
+</main>
+</div>
+<script>
+  function copiarDados(){
+    var linhas = document.querySelectorAll('#tabela-dados tr');
+    var saida = [];
+    for (var i = 1; i < linhas.length; i++){
+      var cels = linhas[i].querySelectorAll('td');
+      var vals = [];
+      for (var j = 1; j < cels.length; j++){ vals.push(cels[j].textContent.trim()); }
+      saida.push(vals.join('\t'));
+    }
+    var texto = saida.join('\n');
+    var aviso = document.getElementById('aviso');
+    function ok(){ aviso.textContent = 'Dados copiados! Cole na célula A1.'; setTimeout(function(){ aviso.textContent=''; }, 3000); }
+    function reserva(){
+      var area = document.createElement('textarea');
+      area.value = texto; document.body.appendChild(area); area.select();
+      try { document.execCommand('copy'); ok(); } catch(e){ aviso.textContent = 'Selecione a tabela e use Ctrl+C.'; }
+      document.body.removeChild(area);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(ok, reserva);
+    } else { reserva(); }
+  }
+</script>
+</body>
+</html>
